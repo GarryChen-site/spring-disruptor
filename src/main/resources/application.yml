@@ -1,0 +1,3 @@
+
+disruptorParams:
+  ringBufferSize: 2048
