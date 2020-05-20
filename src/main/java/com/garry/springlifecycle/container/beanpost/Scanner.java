@@ -13,6 +13,7 @@ import com.garry.springlifecycle.container.interceptor.IntroduceInfoHolder;
 import com.garry.springlifecycle.domain.message.DomainEventHandler;
 import com.garry.springlifecycle.domain.message.consumer.ModelConsumerMethodHolder;
 import com.garry.springlifecycle.utils.ClassUtil;
+import com.garry.springlifecycle.utils.StringUtil;
 import com.garry.springlifecycle.utils.UtilValidate;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -67,20 +68,32 @@ public class Scanner extends ClassPathBeanDefinitionScanner {
             loadAnnotationIntroduceInfos(beanDefinition, registry);
 
             // @Interceptors
-//            interceptorLoad(beanDefinition, registry);
+            loadAnnotationInterceptors(beanDefinition, registry);
 
         }
         return beanDefinitionHolders;
     }
 
-    @Deprecated
-    private void interceptorLoad(BeanDefinition beanDefinition, BeanDefinitionRegistry registry) {
+    //    @Deprecated
+    private void loadAnnotationInterceptors(BeanDefinition beanDefinition, BeanDefinitionRegistry registry) {
         final boolean isInterceptor = ((ScannedGenericBeanDefinition) beanDefinition).getMetadata().hasAnnotation("com.garry.springlifecycle.annotation.Interceptor");
-        if (!isInterceptor){
+        if (!isInterceptor) {
             return;
         }
         final String interceptorClassName = beanDefinition.getBeanClassName();
-        createAnnotationInterceptor(interceptorClassName,beanDefinition,registry);
+        final int length = StringUtil.split(interceptorClassName, ".").length;
+        String removeBeanName = StringUtil.split(interceptorClassName, ".")[length - 1];
+        removeBeanName = (new StringBuilder()).append(Character.toLowerCase(removeBeanName.charAt(0))).
+                append(removeBeanName.substring(1)).toString();
+        if (registry.containsBeanDefinition(removeBeanName)) {
+            registry.removeBeanDefinition(removeBeanName);
+//            final Interceptor in = ((ScannedGenericBeanDefinition) beanDefinition).getBeanClass().getAnnotation(Interceptor.class);
+            final Class aClass = Utils.createClass(interceptorClassName);
+            final Interceptor in = (Interceptor) aClass.getAnnotation(Interceptor.class);
+            registry.registerBeanDefinition(in.name(), beanDefinition);
+        }
+
+//        createAnnotationInterceptor(interceptorClassName,beanDefinition,registry);
     }
 
     @Deprecated
@@ -88,9 +101,9 @@ public class Scanner extends ClassPathBeanDefinitionScanner {
         final Class interceptorClass = Utils.createClass(interceptorClassName);
         final Interceptor interceptor = (Interceptor) interceptorClass.getAnnotation(Interceptor.class);
 
-        if (!UtilValidate.isEmpty(interceptor.value())){
+        if (!UtilValidate.isEmpty(interceptor.value())) {
             interceptorClassName = interceptor.value();
-        }else if (!UtilValidate.isEmpty(interceptor.name())){
+        } else if (!UtilValidate.isEmpty(interceptor.name())) {
             interceptorClassName = interceptor.name();
         }
 
@@ -154,12 +167,18 @@ public class Scanner extends ClassPathBeanDefinitionScanner {
         final Class componentClass = Utils.createClass(beanClassName);
         final JDComponent jdComponent = (JDComponent) componentClass.getAnnotation(JDComponent.class);
         final String componentInAnnotation = jdComponent.value();
-        if (registry.containsBeanDefinition(beanClassName)){
-            registry.removeBeanDefinition(beanClassName);
+        final int length = StringUtil.split(beanClassName, ".").length;
+        String removeBeanName = StringUtil.split(beanClassName, ".")[length - 1];
+        // student
+        removeBeanName = (new StringBuilder()).append(Character.toLowerCase(removeBeanName.charAt(0))).
+                append(removeBeanName.substring(1)).toString();
+        if (registry.containsBeanDefinition(removeBeanName)) {
+            registry.removeBeanDefinition(removeBeanName);
         }
-        registry.registerBeanDefinition(componentInAnnotation,beanDefinition);
+        registry.registerBeanDefinition(componentInAnnotation, beanDefinition);
         createAnnotationComponentClass(componentClass, beanDefinition, registry);
     }
+
 
     private void createAnnotationComponentClass(Class componentClass, BeanDefinition beanDefinition, BeanDefinitionRegistry registry) {
         final JDComponent jdComponent = (JDComponent) componentClass.getAnnotation(JDComponent.class);
@@ -223,7 +242,7 @@ public class Scanner extends ClassPathBeanDefinitionScanner {
             return;
         }
 
-        registerContainerConsumersForModel("modelConsumerMethodHolder",registry);
+        registerContainerConsumersForModel("modelConsumerMethodHolder", registry);
 
         final String beanClassName = beanDefinition.getBeanClassName();
         final Class modelClass = Utils.createClass(beanClassName);
@@ -299,9 +318,9 @@ public class Scanner extends ClassPathBeanDefinitionScanner {
     @Override
     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
         return super.isCandidateComponent(beanDefinition) && (
-                beanDefinition.getMetadata().hasAnnotation(Consumer.class.getName())||
-                beanDefinition.getMetadata().hasAnnotation(JDComponent.class.getName())||
-                beanDefinition.getMetadata().hasAnnotation(Introduce.class.getName())||
-                beanDefinition.getMetadata().hasAnnotation(Interceptor.class.getName()));
+                beanDefinition.getMetadata().hasAnnotation(Consumer.class.getName()) ||
+                        beanDefinition.getMetadata().hasAnnotation(JDComponent.class.getName()) ||
+                        beanDefinition.getMetadata().hasAnnotation(Introduce.class.getName()) ||
+                        beanDefinition.getMetadata().hasAnnotation(Interceptor.class.getName()));
     }
 }

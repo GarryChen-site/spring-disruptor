@@ -1,5 +1,6 @@
 package com.garry.springlifecycle.container.beanpost.aop.interceptor;
 
+import com.garry.springlifecycle.annotation.Interceptor;
 import com.garry.springlifecycle.annotation.model.Send;
 import com.garry.springlifecycle.async.EventMessageFire;
 import com.garry.springlifecycle.async.future.FutureListener;
@@ -9,7 +10,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-@Component
+@Interceptor(name = "componentmessage")
 public class ComponentMessageInterceptor implements MethodInterceptor {
 
     private ApplicationContext applicationContext;

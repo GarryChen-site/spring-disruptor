@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <event href="mailto:banqiao@jdon.com">banq</event>
  * 
  */
-@Interceptor
+@Component
 public class InterceptorsChain  {
 	private final static String module = InterceptorsChain.class.getName();
 	public final static String NAME = "InterceptorsChain";

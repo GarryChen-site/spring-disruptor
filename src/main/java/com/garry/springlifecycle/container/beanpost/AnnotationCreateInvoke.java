@@ -21,10 +21,6 @@ public class AnnotationCreateInvoke implements BeanFactoryPostProcessor, Applica
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         final Scanner scanner = new Scanner((BeanDefinitionRegistry) beanFactory);
         scanner.setResourceLoader(this.annotationConfigApplicationContext);
-//        final String[] beanDefinitionNames = annotationConfigApplicationContext.getBeanDefinitionNames();
-//        Arrays.stream(beanDefinitionNames)
-//                .forEach(name -> System.out.println(name));
-//        System.out.println("****************Create " + beanDefinitionNames[beanDefinitionNames.length - 1]);
         scanner.scan("com.garry.springlifecycle");
     }
 

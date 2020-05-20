@@ -43,8 +43,8 @@ public class CGLIBDynamicProxyWeaving implements MethodInterceptor, java.io.Seri
 	}
 
 	public Object intercept(Object object, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-		Debug.logVerbose("<################################>Action: JdonFramework core entrance intercept", module);
-		Debug.logVerbose("[JdonFramework]<################>execute method=" + method.getDeclaringClass().getName() + "." + method.getName(), module);
+//		Debug.logVerbose("<################################>Action: JdonFramework core entrance intercept", module);
+//		Debug.logVerbose("[JdonFramework]<################>execute method=" + method.getDeclaringClass().getName() + "." + method.getName(), module);
 		if (method.getName().equals("finalize")) {
 			return null;
 		}

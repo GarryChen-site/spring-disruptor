@@ -51,17 +51,7 @@ public class AnnotationInitializeInvoke implements BeanPostProcessor, Applicatio
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-//        buildAdvisor();
-//        Map<Method, List<AbstractAdvisor>> matchAdvisorMap = matchAdvisor(bean);
-//        if (matchAdvisorMap.isEmpty()) {
-//            return bean;
-//        } else {
-//            Enhancer enhancer = new Enhancer();
-//            enhancer.setSuperclass(bean.getClass());
-//            enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
-//            enhancer.setCallback(new MethodInterceptorImpl(matchAdvisorMap));
-//            return enhancer.create();
-//        }
+
         applicationContext = (AnnotationConfigApplicationContext) applicationContext;
 
         if (bean.getClass().isAnnotationPresent(Interceptor.class)) {
@@ -102,7 +92,7 @@ public class AnnotationInitializeInvoke implements BeanPostProcessor, Applicatio
             }
             POJOTargetMetaDef pojoTargetMetaDef = new POJOTargetMetaDef(interceptorName, interceptorClass.getName());
             annotationHolder.getTargetMetaDefHolder().add(interceptorName, pojoTargetMetaDef);
-
+//            return bean;
         }
 
         if (bean.getClass().isAnnotationPresent(JDComponent.class)) {
@@ -124,7 +114,7 @@ public class AnnotationInitializeInvoke implements BeanPostProcessor, Applicatio
                     addOnEventConsumerMethod(componentMethod, componentClass, applicationContext);
                 }
             }
-            return null;
+//            return bean;
         }
 
         if (bean.getClass().isAnnotationPresent(Introduce.class)) {
@@ -168,117 +158,9 @@ public class AnnotationInitializeInvoke implements BeanPostProcessor, Applicatio
 //
 //        }
 
-//        final Map<String, Object> componentBeans = applicationContext.getBeansWithAnnotation(JDComponent.class);
-//        if (!componentBeans.isEmpty()) {
-//            for (Object componentObject : componentBeans.values()) {
-//                final Class<?> componentClass = componentObject.getClass();
-//                final JDComponent component = componentClass.getAnnotation(JDComponent.class);
-//                //去 NullPointerException
-//                if (component == null){
-//                    continue;
-//                }
-//                final String componentName = UtilValidate.isEmpty(component.value()) ? componentClass.getName() : component.value();
-//                final AnnotationHolder annotationHolder = (AnnotationHolder) applicationContext.getBean("annotationHolder");
-//                annotationHolder.addComponent(componentName, componentClass);
-//                final POJOTargetMetaDef pojoTargetMetaDef = new POJOTargetMetaDef(componentName, componentClass.getName());
-//                annotationHolder.getTargetMetaDefHolder().add(componentName, pojoTargetMetaDef);
-//
-//                final Method[] allDecaredMethods = ClassUtil.getAllDecaredMethods(componentClass);
-//                for (Method componentMethod : allDecaredMethods) {
-//                    if (componentMethod.isAnnotationPresent(OnEvent.class)) {
-//                        addOnEventConsumerMethod(componentMethod, componentClass, applicationContext);
-//                    }
-//                }
-//            }
-//        }
-
-//        final Map<String, Object> introduceBeans = applicationContext.getBeansWithAnnotation(Introduce.class);
-//        if (introduceBeans != null) {
-//            for (Object introduceObject : introduceBeans.values()) {
-//                final Class<?> introduceClass = introduceObject.getClass();
-//                final Introduce introduce = introduceClass.getAnnotation(Introduce.class);
-//                // 去 NullPointerException
-//                if (introduce == null) {
-//                    continue;
-//                }
-//
-//                final String[] adviceNames = introduce.values();
-//                final IntroduceInfoHolder introduceInfoHolder = (IntroduceInfoHolder) applicationContext.getBean("introduceInfoHolder");
-//                introduceInfoHolder.addIntroduceInfo(adviceNames, introduceClass);
-//                final AnnotationHolder annotationHolder = applicationContext.getBean(AnnotationHolder.class);
-//                final String targetName = annotationHolder.getComponentName(introduceClass);
-//                introduceInfoHolder.addTargetClassNames(introduceClass, targetName);
-//            }
-//        }
-
-//        final Map<String, Object> interceptorBeans = applicationContext.getBeansWithAnnotation(Interceptor.class);
-//        if (!interceptorBeans.isEmpty()) {
-//
-//            final InterceptorsChain existedInterceptorsChain = (InterceptorsChain) applicationContext.getBean(ComponentKeys.INTERCEPTOR_CHAIN);
-//
-//            for (Object interceptorObject : interceptorBeans.values()) {
-//                final Class<?> interceptorClass = interceptorObject.getClass();
-//                final Interceptor interceptor = interceptorClass.getAnnotation(Interceptor.class);
-//
-//                String interceptorName = interceptorClass.getName();
-//                if (!UtilValidate.isEmpty(interceptor.value())) {
-//                    interceptorName = interceptor.value();
-//                } else if (!UtilValidate.isEmpty(interceptor.name())) {
-//                    interceptorName = interceptor.name();
-//                }
-//
-//                final AnnotationHolder annotationHolder = applicationContext.getBean(AnnotationHolder.class);
-//                annotationHolder.addComponent(interceptorName, interceptorClass);
-//                final IntroduceInfoHolder introduceInfoHolder = applicationContext.getBean(IntroduceInfoHolder.class);
-//                // aop registerAspect
-//                if (!(MethodInterceptor.class.isAssignableFrom(interceptorClass))) {
-//                    continue;
-//                }
-//                if (!UtilValidate.isEmpty(interceptor.pointcut())) {
-//                    final String[] targets = interceptor.pointcut().split(",");
-//                    for (int i = 0; i < targets.length; i++) {
-//                        final Class targetClass = annotationHolder.getComponentClass(targets[i]);
-//                        if (targetClass != null) {
-//                            introduceInfoHolder.addTargetClassNames(targetClass, targets[i]);
-//                        }
-//                        // aop registerAspect
-//                        existedInterceptorsChain.addInterceptor(targets[i], interceptorName);
-//                    }
-//                } else {
-//                    final List<String> targetNames = introduceInfoHolder.getIntroducerNameByIntroducedName(interceptorName);
-//                    for (String targetName : targetNames) {
-//                        existedInterceptorsChain.addInterceptor(targetName, interceptorName);
-//                    }
-//                }
-//                POJOTargetMetaDef pojoTargetMetaDef = new POJOTargetMetaDef(interceptorName, interceptorClass.getName());
-//                annotationHolder.getTargetMetaDefHolder().add(interceptorName, pojoTargetMetaDef);
-//
-//            }
-//        }
 
 
-//        if (bean.getClass().isAnnotationPresent(Introduce.class)) {
-//            final AopClient aopClient = (AopClient) applicationContext.getBean("aopClient");
-//            final POJOTargetMetaDef pojoTargetMetaDef = new POJOTargetMetaDef(beanName, bean.getClass().getName());
-//            final TargetMetaRequest targetMetaRequest = new TargetMetaRequest(pojoTargetMetaDef);
-//
-//            Enhancer enhancer = new Enhancer();
-//            enhancer.setCallback(new CGLIBDynamicProxyWeaving(targetMetaRequest, aopClient));
-//            enhancer.setInterfaces(getInterfaces(targetMetaRequest.getTargetMetaDef()));
-//            return enhancer.create();
-
-
-//            buildAdvisor();
-//            Map<Method, List<AbstractAdvisor>> matchAdvisorMap = matchAdvisor(bean);
-//            Enhancer enhancer = new Enhancer();
-//            enhancer.setSuperclass(bean.getClass());
-//            enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
-//            enhancer.setCallback(new MethodInterceptorImpl(matchAdvisorMap));
-//            return enhancer.create();
-//        }
-
-
-        return null;
+        return bean;
     }
 
     /**
