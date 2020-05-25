@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 package com.garry.springlifecycle.domain.message;
 
@@ -24,66 +24,69 @@ import com.garry.springlifecycle.utils.Debug;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 /**
  * this is for domain model, there is another for components/services
  * com.jdon.aop.interceptor.ComponentMessageInterceptor
- * 
+ * <p>
  * useage see:com.jdon.sample.test.domain
- * 
+ * <p>
  * 1. create dynamic proxy for event Model in DomainCacheInterceptor.
- * 
- * 
+ * <p>
+ * <p>
  * 2. intercepte the method with @send
- * 
+ * <p>
  * 3. @Channel will accept the message;
- * 
+ *
  * @author banq
- * 
+ * 不能是@Interceptor 因为这算一个组件
  */
-@Interceptor(name = "message")
+
+
+@Component("message")
 public class MessageInterceptor implements MethodInterceptor {
-	public final static String module = MessageInterceptor.class.getName();
+    public final static String module = MessageInterceptor.class.getName();
 
-	private ApplicationContext applicationContext;
-	protected EventMessageFire eventMessageFirer;
+    private ApplicationContext applicationContext;
+    protected EventMessageFire eventMessageFirer;
 
-	public MessageInterceptor(ApplicationContext applicationContext, EventMessageFire eventMessageFirer) {
-		super();
-		this.applicationContext = applicationContext;
-		this.eventMessageFirer = eventMessageFirer;
-	}
+    public MessageInterceptor(ApplicationContext applicationContext, EventMessageFire eventMessageFirer) {
+        super();
+        this.applicationContext = applicationContext;
+        this.eventMessageFirer = eventMessageFirer;
+    }
 
-	public Object invoke(MethodInvocation invocation) throws Throwable {
-		if (!invocation.getMethod().isAnnotationPresent(Send.class))
-			return invocation.proceed();
+    public Object invoke(MethodInvocation invocation) throws Throwable {
+        if (!invocation.getMethod().isAnnotationPresent(Send.class))
+            return invocation.proceed();
 
-		Send send = invocation.getMethod().getAnnotation(Send.class);
-		String channel = send.value();
-		Object result = null;
-		try {
+        Send send = invocation.getMethod().getAnnotation(Send.class);
+        String channel = send.value();
+        Object result = null;
+        try {
 
-			result = invocation.proceed();
+            result = invocation.proceed();
 
-			DomainMessage message = null;
-			if (DomainMessage.class.isAssignableFrom(result.getClass())) {
-				message = (DomainMessage) result;
-			} else {
-				message = new DomainMessage(result);
-			}
-			eventMessageFirer.fire(message, send);
+            DomainMessage message = null;
+            if (DomainMessage.class.isAssignableFrom(result.getClass())) {
+                message = (DomainMessage) result;
+            } else {
+                message = new DomainMessage(result);
+            }
+            eventMessageFirer.fire(message, send);
 
-			// older queue @Send(myChannl) ==> @Component(myChannl)
-			Object listener = applicationContext.getBean(channel);
-			if (listener != null && listener instanceof FutureListener)
-				eventMessageFirer.fire(message, send, (FutureListener) listener);
+            // older queue @Send(myChannl) ==> @Component(myChannl)
+            Object listener = applicationContext.getBean(channel);
+            if (listener != null && listener instanceof FutureListener)
+                eventMessageFirer.fire(message, send, (FutureListener) listener);
 
-			eventMessageFirer.fireToModel(message, send, invocation);
+            eventMessageFirer.fireToModel(message, send, invocation);
 
-		} catch (Exception e) {
-			Debug.logError("invoke error: " + e, module);
-		}
-		return result;
-	}
+        } catch (Exception e) {
+            Debug.logError("invoke error: " + e, module);
+        }
+        return result;
+    }
 
 }

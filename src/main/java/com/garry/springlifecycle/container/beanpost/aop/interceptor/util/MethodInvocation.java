@@ -1,6 +1,7 @@
 package com.garry.springlifecycle.container.beanpost.aop.interceptor.util;
 
-import org.springframework.cglib.proxy.MethodProxy;
+
+import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.List;

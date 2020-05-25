@@ -3,6 +3,7 @@ package com.garry.springlifecycle.async.disruptor;
 
 import com.garry.springlifecycle.async.disruptor.pool.DisruptorPoolFactory;
 import com.garry.springlifecycle.container.annotation.type.ConsumerLoader;
+import com.garry.springlifecycle.container.beanpost.AfterAllInitializing;
 import com.garry.springlifecycle.domain.message.DomainEventDispatchHandler;
 import com.garry.springlifecycle.domain.message.DomainEventHandler;
 import com.garry.springlifecycle.domain.message.consumer.ConsumerMethodHolder;
@@ -12,7 +13,9 @@ import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.EventHandlerGroup;
 import com.lmax.disruptor.dsl.ProducerType;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -41,7 +44,7 @@ import java.util.concurrent.Executors;
  * 
  */
 @Component
-public class DisruptorFactory  {
+public class DisruptorFactory implements ApplicationContextAware {
 	public final static String module = DisruptorFactory.class.getName();
 	protected final ConcurrentHashMap<String, TreeSet<DomainEventHandler>> handlesMap;
 
@@ -51,9 +54,9 @@ public class DisruptorFactory  {
 
 	private DisruptorPoolFactory disruptorPoolFactory;
 
-	public DisruptorFactory(DisruptorParams disruptorParams, ApplicationContext applicationContext, DisruptorPoolFactory disruptorPoolFactory) {
+	public DisruptorFactory(DisruptorParams disruptorParams,
+							DisruptorPoolFactory disruptorPoolFactory) {
 		this.ringBufferSize = disruptorParams.getRingBufferSize();
-		this.applicationContext = applicationContext;
 		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler>>();
 		this.disruptorPoolFactory = disruptorPoolFactory;
 		this.disruptorPoolFactory.setDisruptorFactory(this);
@@ -163,7 +166,9 @@ public class DisruptorFactory  {
 	}
 
 	public boolean isContain(String topic) {
-		if (applicationContext.getBean(ConsumerLoader.TOPICNAME + topic) == null && applicationContext.getBean(ConsumerLoader.TOPICNAME2 + topic) == null) {
+		boolean isExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
+		boolean isMethodExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
+		if ((!isExist) && (!isMethodExist)) {
 			return false;
 		} else
 			return true;
@@ -179,8 +184,13 @@ public class DisruptorFactory  {
 	 */
 	protected Collection loadEvenHandler(String topic) {
 		Collection ehs = new ArrayList();
-		Collection<String> consumers = (Collection<String>) applicationContext.getBean(ConsumerLoader.TOPICNAME + topic);
-		if (consumers == null || consumers.size() == 0) {
+//		Collection<String> consumers = (Collection<String>) applicationContext.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
+		boolean isExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
+		if (!isExist){
+			return ehs;
+		}
+		Collection<String> consumers = (Collection<String>) applicationContext.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
+		if (consumers.size() == 0) {
 			Debug.logWarning("[Jdonframework]there is no any consumer class annotated with @Consumer(" + topic + ") ", module);
 			return ehs;
 		}
@@ -195,9 +205,11 @@ public class DisruptorFactory  {
 
 	protected Collection loadOnEventConsumers(String topic) {
 		Collection ehs = new ArrayList();
-		Collection consumerMethods = (Collection) applicationContext.getBean(ConsumerLoader.TOPICNAME2 + topic);
-		if (consumerMethods == null)
+		final boolean isExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
+		if (!isExist) {
 			return ehs;
+		}
+		Collection consumerMethods = (Collection) applicationContext.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
 		for (Object o : consumerMethods) {
 			ConsumerMethodHolder consumerMethodHolder = (ConsumerMethodHolder) o;
 			DomainEventDispatchHandler domainEventDispatchHandler = new DomainEventDispatchHandler(consumerMethodHolder, applicationContext);
@@ -242,5 +254,10 @@ public class DisruptorFactory  {
 		this.handlesMap.clear();
 		this.ringBufferSize = 0;
 
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 }

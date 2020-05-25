@@ -2,9 +2,10 @@ package com.garry.springlifecycle.domain.proxy;
 
 
 import com.garry.springlifecycle.utils.Debug;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.cglib.proxy.MethodInterceptor;
-import org.springframework.cglib.proxy.MethodProxy;
+
 
 import java.lang.reflect.Method;
 import java.util.List;

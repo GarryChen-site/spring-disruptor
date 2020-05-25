@@ -5,8 +5,9 @@ package com.garry.springlifecycle.businessproxy.dyncproxy.cglib;
 import com.garry.springlifecycle.container.access.TargetMetaRequest;
 import com.garry.springlifecycle.container.beanpost.aop.interceptor.util.AopClient;
 import com.garry.springlifecycle.utils.Debug;
-import org.springframework.cglib.proxy.MethodInterceptor;
-import org.springframework.cglib.proxy.MethodProxy;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+
 
 import java.lang.reflect.Method;
 
@@ -43,8 +44,8 @@ public class CGLIBDynamicProxyWeaving implements MethodInterceptor, java.io.Seri
 	}
 
 	public Object intercept(Object object, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-//		Debug.logVerbose("<################################>Action: JdonFramework core entrance intercept", module);
-//		Debug.logVerbose("[JdonFramework]<################>execute method=" + method.getDeclaringClass().getName() + "." + method.getName(), module);
+		Debug.logVerbose("<################################>Action: JdonFramework core entrance intercept", module);
+		Debug.logVerbose("[JdonFramework]<################>execute method=" + method.getDeclaringClass().getName() + "." + method.getName(), module);
 		if (method.getName().equals("finalize")) {
 			return null;
 		}

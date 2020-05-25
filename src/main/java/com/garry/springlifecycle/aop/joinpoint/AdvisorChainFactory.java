@@ -56,14 +56,9 @@ public class AdvisorChainFactory  {
 	 */
 	public List<MethodInterceptor> create(TargetMetaDef targetMetaDef) throws Exception {
 		Debug.logVerbose("[JdonFramework] enter  create PointcutAdvisor  ", module);
-//		if (targetMetaDef.isEJB()) {
-//			if (interceptorsForEJB.isEmpty()) {
-//				createEJBAdvice(targetMetaDef);
-//			}
-//			return interceptorsForEJB;
-//		}
 
 		if (interceptors.isEmpty()) {
+			// 创建四小花旦 poolInterceptor statefulInterceptor sessionContextInterceptor cacheInterceptor
 			createPOJOAdvice(targetMetaDef);
 		}
 
@@ -109,8 +104,7 @@ public class AdvisorChainFactory  {
 	}
 
 	protected synchronized void createPOJOAdvice(TargetMetaDef targetMetaDef) throws Exception {
-		if (targetMetaDef.isEJB())
-			return;
+
 		if (!interceptors.isEmpty())
 			return;
 		Debug.logVerbose("[JdonFramework] enter  create PointcutAdvisor  ", module);
@@ -118,9 +112,9 @@ public class AdvisorChainFactory  {
 			List<Advisor> pojoInterceptorNames = interceptorsChain.getAdvisors(Pointcut.POJO_TARGET_PROPS_SERVICES);
 			if (pojoInterceptorNames == null)
 				return;
-			List<Advisor> alladvices = interceptorsChain.getAdvisors(Pointcut.TARGET_PROPS_SERVICES);
-			if (alladvices != null)
-				pojoInterceptorNames.addAll(alladvices);
+			List<Advisor> allAdvices = interceptorsChain.getAdvisors(Pointcut.TARGET_PROPS_SERVICES);
+			if (allAdvices != null)
+				pojoInterceptorNames.addAll(allAdvices);
 
 			for (Advisor advisor : pojoInterceptorNames) {
 				MethodInterceptor interceptor = (MethodInterceptor) applicationContext.getBean(advisor.getAdviceName());
@@ -136,19 +130,19 @@ public class AdvisorChainFactory  {
 	}
 
 	protected List<MethodInterceptor> createTargetPOJOAdvice(String name) throws Exception {
-		List<MethodInterceptor> myinterceptors = Collections.synchronizedList(new ArrayList());
+		List<MethodInterceptor> myInterceptors = Collections.synchronizedList(new ArrayList());
 
 		Debug.logVerbose("[JdonFramework] enter  create PointcutAdvisor2  ", module);
 		List<Advisor> pojoInterceptorNames = interceptorsChain.getAdvisors(name);
 		if (pojoInterceptorNames == null)
-			return myinterceptors;
+			return myInterceptors;
 
 		for (Advisor advisor : pojoInterceptorNames) {
 			MethodInterceptor interceptor = (MethodInterceptor) applicationContext.getBean(advisor.getAdviceName());
-			myinterceptors.add(interceptor);
-			Debug.logVerbose("[JdonFramework] find pojoService's interceptos size=" + myinterceptors.size(), module);
+			myInterceptors.add(interceptor);
+			Debug.logVerbose("[JdonFramework] find pojoService's interceptos size=" + myInterceptors.size(), module);
 		}
-		return myinterceptors;
+		return myInterceptors;
 	}
 
 //	@Override

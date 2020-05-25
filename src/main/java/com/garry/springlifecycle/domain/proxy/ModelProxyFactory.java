@@ -2,8 +2,9 @@ package com.garry.springlifecycle.domain.proxy;
 
 
 import com.garry.springlifecycle.utils.Debug;
-import org.springframework.cglib.proxy.Enhancer;
-import org.springframework.cglib.proxy.MethodInterceptor;
+
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
 import org.springframework.stereotype.Component;
 
 /**

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 // 不需要 spring注解搞定
-@Component
+//@Component
 public class AnnotationHolder {
 
 	public final static String NAME = AnnotationHolder.class.getSimpleName();

@@ -7,7 +7,7 @@ import com.garry.springlifecycle.annotation.pointcut.Before;
 import com.garry.springlifecycle.annotation.pointcut.method.Input;
 import com.garry.springlifecycle.annotation.pointcut.method.Returning;
 import com.garry.springlifecycle.utils.Debug;
-import org.springframework.cglib.proxy.MethodProxy;
+import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;

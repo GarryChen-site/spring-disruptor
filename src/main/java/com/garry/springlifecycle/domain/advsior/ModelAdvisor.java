@@ -6,8 +6,10 @@ import com.garry.springlifecycle.annotation.Introduce;
 import com.garry.springlifecycle.domain.proxy.ModelCGLIBMethodInterceptorImp;
 import com.garry.springlifecycle.domain.proxy.ModelProxyFactory;
 import com.garry.springlifecycle.utils.Debug;
-import org.springframework.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodInterceptor;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 @Component
-public class ModelAdvisor {
+public class ModelAdvisor implements ApplicationContextAware {
 	private final static String module = ModelAdvisor.class.getName();
 
 	private ApplicationContext applicationContext;
@@ -43,7 +45,6 @@ public class ModelAdvisor {
 
 	public ModelAdvisor(ApplicationContext applicationContext, ModelProxyFactory modelProxyFactory) {
 		super();
-		this.applicationContext = applicationContext;
 		this.modelProxyFactory = modelProxyFactory;
 		this.modeInterceptors = new ConcurrentHashMap();
 	}
@@ -89,7 +90,12 @@ public class ModelAdvisor {
 
 	}
 
-//	@Override
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
+	//	@Override
 //	public void start() {
 //		// TODO Auto-generated method stub
 //

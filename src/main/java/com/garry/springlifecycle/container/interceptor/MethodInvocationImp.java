@@ -2,9 +2,9 @@ package com.garry.springlifecycle.container.interceptor;
 
 
 import com.garry.springlifecycle.utils.Debug;
+import net.sf.cglib.proxy.MethodProxy;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;

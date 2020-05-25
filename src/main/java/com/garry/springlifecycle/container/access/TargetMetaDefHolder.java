@@ -3,6 +3,7 @@ package com.garry.springlifecycle.container.access;
 
 
 import com.garry.springlifecycle.businessproxy.TargetMetaDef;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @author banq
  * 
  */
+@Component
 public class TargetMetaDefHolder implements  Serializable {
 
 	/**

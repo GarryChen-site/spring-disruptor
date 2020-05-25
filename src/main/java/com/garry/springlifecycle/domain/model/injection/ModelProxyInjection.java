@@ -9,7 +9,9 @@ import com.garry.springlifecycle.domain.advsior.ModelAdvisor;
 import com.garry.springlifecycle.utils.ClassUtil;
 import com.garry.springlifecycle.utils.Debug;
 import com.garry.springlifecycle.utils.ObjectCreator;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -37,17 +39,16 @@ import java.util.List;
  * 
  */
 @Component
-public class ModelProxyInjection {
+public class ModelProxyInjection implements ApplicationContextAware {
 	private final static String module = ModelProxyInjection.class.getName();
 	private ModelAdvisor modelAdvisor;
 //	private ContainerCallback containerCallback;
 
 	private ApplicationContext applicationContext;
 
-	public ModelProxyInjection(ModelAdvisor modelAdvisor, ApplicationContext applicationContext) {
+	public ModelProxyInjection(ModelAdvisor modelAdvisor) {
 		super();
 		this.modelAdvisor = modelAdvisor;
-		this.applicationContext = applicationContext;
 	}
 
 	public void injectProperties(Object targetModel) {
@@ -126,4 +127,8 @@ public class ModelProxyInjection {
 		return false;
 	}
 
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
 }

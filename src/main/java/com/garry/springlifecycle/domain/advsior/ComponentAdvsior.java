@@ -10,7 +10,7 @@ import com.garry.springlifecycle.container.interceptor.IntroduceInfoHolder;
 import com.garry.springlifecycle.container.interceptor.ProxyFactory;
 import com.garry.springlifecycle.utils.ClassUtil;
 import com.garry.springlifecycle.utils.Debug;
-import org.springframework.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodInterceptor;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;

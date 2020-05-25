@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component
+//@Component
 public class IntroduceInfoHolder {
 	public final static String NAME = IntroduceInfoHolder.class.getSimpleName();
 
