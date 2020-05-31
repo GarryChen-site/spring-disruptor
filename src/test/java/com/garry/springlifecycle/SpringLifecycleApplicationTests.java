@@ -39,7 +39,8 @@ class SpringLifecycleApplicationTests {
 	@Test
 	public void test_applicationContext_Component_event(){
 		final AI a = (AI) applicationContext.getBean("producer");
-//		a.sayHello("123");
+		a.sayHello("123");
 		a.ma();
+		
 	}
 }
