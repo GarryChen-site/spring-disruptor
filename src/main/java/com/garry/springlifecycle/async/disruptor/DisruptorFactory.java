@@ -2,7 +2,6 @@ package com.garry.springlifecycle.async.disruptor;
 
 
 import com.garry.springlifecycle.async.disruptor.pool.DisruptorPoolFactory;
-import com.garry.springlifecycle.container.annotation.type.ConsumerLoader;
 import com.garry.springlifecycle.container.beanpost.AfterAllInitializing;
 import com.garry.springlifecycle.domain.message.DomainEventDispatchHandler;
 import com.garry.springlifecycle.domain.message.DomainEventHandler;

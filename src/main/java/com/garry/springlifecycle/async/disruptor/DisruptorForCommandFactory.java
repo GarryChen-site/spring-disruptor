@@ -4,7 +4,6 @@ package com.garry.springlifecycle.async.disruptor;
 import com.garry.springlifecycle.async.disruptor.pool.DisruptorCommandPoolFactory;
 import com.garry.springlifecycle.async.disruptor.pool.DomainCommandHandlerFirst;
 import com.garry.springlifecycle.async.disruptor.pool.DomainEventHandlerDecorator;
-import com.garry.springlifecycle.container.annotation.type.ModelConsumerLoader;
 import com.garry.springlifecycle.container.beanpost.AfterAllInitializing;
 import com.garry.springlifecycle.domain.message.DomainEventHandler;
 import com.garry.springlifecycle.domain.message.consumer.DomainCommandDispatchHandler;

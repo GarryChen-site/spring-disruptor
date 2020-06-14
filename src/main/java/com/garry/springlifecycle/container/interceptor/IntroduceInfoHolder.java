@@ -1,6 +1,5 @@
 package com.garry.springlifecycle.container.interceptor;
 
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
