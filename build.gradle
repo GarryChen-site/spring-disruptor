@@ -2,6 +2,8 @@ plugins {
     id 'org.springframework.boot' version '2.2.7.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
+    id 'maven-publish'
+    id 'maven'
 }
 
 group = 'com.garry'
@@ -23,6 +25,7 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.11.0'
     implementation 'commons-pool:commons-pool:1.6'
     implementation 'cglib:cglib:2.2.2'
+    implementation 'org.apache.commons:commons-lang3:3.3.2'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -33,3 +36,26 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+
+
+// 指定上传的路径
+def localMavenRepo = 'file:/Users/garrychen/Documents/repository'
+
+// 上传Task，Gradle会生成并上传pom.xml文件。
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: localMavenRepo)
+
+            //构造项目的Pom文件
+            pom.project {
+                name = project.name
+                packaging = 'jar'
+                description = 'description'
+            }
+        }
+
+    }
+}
+
