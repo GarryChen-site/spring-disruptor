@@ -10,7 +10,11 @@ public class B {
 	@OnEvent("maTest")
 	public void mb(TestEvent testEvent) throws Exception {
 		testEvent.setResult(testEvent.getS() + 1);
+//		while (testEvent.getS() == 99){
+//
+//		}
 		System.out.println("consumer B event.@OnEvent.mb.." + testEvent.getResult() + "\n");
+
 //		Assert.assertEquals(testEvent.getResult(), 100);
 	}
 }

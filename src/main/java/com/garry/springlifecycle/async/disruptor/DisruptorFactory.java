@@ -107,8 +107,8 @@ public class DisruptorFactory implements ApplicationContextAware {
 	/**
 	 * one topic one EventDisruptor
 	 * 
-	 * @param topic
-	 * @return
+	 * @param topic 主题
+	 * @return Disruptor
 	 */
 	public Disruptor createDisruptor(String topic) {
 		TreeSet handlers = getHandles(topic);
@@ -128,8 +128,8 @@ public class DisruptorFactory implements ApplicationContextAware {
 	 * 
 	 * no lock
 	 * 
-	 * @param topic
-	 * @return
+	 * @param topic 主题
+	 * @return Disruptor
 	 */
 	public Disruptor createSingleDisruptor(String topic) {
 		TreeSet handlers = getHandles(topic);
@@ -178,8 +178,8 @@ public class DisruptorFactory implements ApplicationContextAware {
 	 * if there are many consumers, execution order will be alphabetical list by
 	 * Name of @Consumer class.
 	 * 
-	 * @param topic
-	 * @return
+	 * @param topic 主题
+	 * @return Collection
 	 */
 	protected Collection loadEvenHandler(String topic) {
 		Collection ehs = new ArrayList();
