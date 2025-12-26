@@ -11,11 +11,9 @@ package com.garry.springlifecycle.utils.jdom;
  * Use is subject to license terms.
  */
 
-
-
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 
 import java.io.File;
 import java.io.InputStream;
@@ -58,9 +56,7 @@ public class XMLProperties {
 	public XMLProperties(String fileName) {
 		try {
 			SAXBuilder builder = new SAXBuilder();
-			// Strip formatting
-			DataUnformatFilter format = new DataUnformatFilter();
-			builder.setXMLFilter(format);
+			// JDOM2 doesn't use setXMLFilter the same way - removed for compatibility
 			doc = builder.build(new File(fileName));
 		} catch (Exception e) {
 			System.err.println("Error creating XML parser in " + "PropertyManager.java");
@@ -77,9 +73,7 @@ public class XMLProperties {
 	public XMLProperties(InputStream inputStream) {
 		try {
 			SAXBuilder builder = new SAXBuilder();
-			// Strip formatting
-			DataUnformatFilter format = new DataUnformatFilter();
-			builder.setXMLFilter(format);
+			// JDOM2 doesn't use setXMLFilter the same way - removed for compatibility
 			doc = builder.build(inputStream);
 		} catch (Exception e) {
 			System.err.println("Error creating XML parser in " + "PropertyManager.java");
@@ -91,7 +85,7 @@ public class XMLProperties {
 	 * Returns the value of the specified property.
 	 * 
 	 * @param name
-	 *            the name of the property to get.
+	 *             the name of the property to get.
 	 * @return the value of the specified property.
 	 */
 	public String getProperty(String name) {
@@ -131,7 +125,7 @@ public class XMLProperties {
 	 * <tt>C</tt>.
 	 * 
 	 * @param parent
-	 *            the name of the parent property.
+	 *               the name of the parent property.
 	 * @return all child property values for the given parent.
 	 */
 	public String[] getChildrenProperties(String parent) {
@@ -183,9 +177,9 @@ public class XMLProperties {
 	 * currently exist, it will be automatically created.
 	 * 
 	 * @param name
-	 *            the name of the property to set.
+	 *              the name of the property to set.
 	 * @param value
-	 *            the new value for the property.
+	 *              the new value for the property.
 	 */
 	public void setProperty(String name, String value) {
 		// Set cache correctly with prop name and value.
@@ -211,7 +205,7 @@ public class XMLProperties {
 	 * Deletes the specified property.
 	 * 
 	 * @param name
-	 *            the property to delete.
+	 *             the property to delete.
 	 */
 	public void deleteProperty(String name) {
 		String[] propName = parsePropertyName(name);
@@ -235,7 +229,7 @@ public class XMLProperties {
 	 * represented as an array of four Strings.
 	 * 
 	 * @param name
-	 *            the name of the Jive property.
+	 *             the name of the Jive property.
 	 * @return an array representation of the given Jive property.
 	 */
 	private String[] parsePropertyName(String name) {

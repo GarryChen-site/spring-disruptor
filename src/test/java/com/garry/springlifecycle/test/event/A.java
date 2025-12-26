@@ -14,7 +14,7 @@ public class A implements AI {
 	// see AI.ma()
 	@Send("maTest")
 	public TestEvent ma() {
-		System.out.println("producer A event.send.ma..");
+		System.out.println("producer A event.send.ma.." + "### "+"currentThread:" + Thread.currentThread().getName());
 		return new TestEvent(99);
 	}
 

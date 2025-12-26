@@ -15,12 +15,13 @@
 
 package com.garry.springlifecycle.controller.pool;
 
-
 import com.garry.springlifecycle.businessproxy.target.TargetServiceFactory;
 import com.garry.springlifecycle.utils.Debug;
-import org.apache.commons.pool.PoolableObjectFactory;
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
 
-public class CommonsPoolFactory implements PoolableObjectFactory {
+public class CommonsPoolFactory implements PooledObjectFactory<Object> {
 	private final static String module = CommonsPoolFactory.class.getName();
 
 	private final TargetServiceFactory targetServiceFactory;
@@ -45,27 +46,27 @@ public class CommonsPoolFactory implements PoolableObjectFactory {
 		return pool;
 	}
 
-	public Object makeObject() {
+	public PooledObject<Object> makeObject() {
 		Object o = null;
 		try {
 			o = targetServiceFactory.create();
 		} catch (Exception ex) {
 			Debug.logError("[JdonFramework] Pool can not make object, error: " + ex, module);
 		}
-		return o;
+		return new DefaultPooledObject<>(o);
 	}
 
-	public void destroyObject(Object o) throws Exception {
+	public void destroyObject(PooledObject<Object> p) throws Exception {
 		targetServiceFactory.destroy();
 	}
 
-	public void activateObject(Object o) throws Exception {
+	public void activateObject(PooledObject<Object> p) throws Exception {
 	}
 
-	public void passivateObject(Object o) throws Exception {
+	public void passivateObject(PooledObject<Object> p) throws Exception {
 	}
 
-	public boolean validateObject(Object o) {
+	public boolean validateObject(PooledObject<Object> p) {
 		return true;
 	}
 

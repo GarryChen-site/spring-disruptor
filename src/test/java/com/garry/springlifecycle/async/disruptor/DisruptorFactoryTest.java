@@ -15,28 +15,32 @@
  */
 package com.garry.springlifecycle.async.disruptor;
 
-
 import com.garry.springlifecycle.domain.message.DomainEventHandler;
 import com.garry.springlifecycle.domain.message.DomainMessage;
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
-public class DisruptorFactoryTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class DisruptorFactoryTest {
 	DisruptorFactory disruptorFactory;
 
+	@BeforeEach
 	protected void setUp() throws Exception {
-		super.setUp();
 		disruptorFactory = new DisruptorFactory();
 	}
 
+	@AfterEach
 	protected void tearDown() throws Exception {
-		super.tearDown();
 	}
 
+	@Test
 	public void testGetDisruptor() {
 		TreeSet<DomainEventHandler> handlers = disruptorFactory.getTreeSet();
 		final DomainEventHandler<EventDisruptor> handler = new DomainEventHandler<EventDisruptor>() {
@@ -90,9 +94,11 @@ public class DisruptorFactoryTest extends TestCase {
 		System.out.print("ok");
 	}
 
+	@Test
 	public void testValueEventProcessor() throws AlertException, InterruptedException, TimeoutException {
-		RingBuffer ringBuffer = RingBuffer.createSingleProducer(new EventResultFactory(), 4, new TimeoutBlockingWaitStrategy(10000,
-				TimeUnit.MILLISECONDS));
+		RingBuffer ringBuffer = RingBuffer.createSingleProducer(new EventResultFactory(), 4,
+				new TimeoutBlockingWaitStrategy(10000,
+						TimeUnit.MILLISECONDS));
 		ValueEventProcessor valueEventProcessor = new ValueEventProcessor(ringBuffer);
 
 		int numMessages = ringBuffer.getBufferSize();

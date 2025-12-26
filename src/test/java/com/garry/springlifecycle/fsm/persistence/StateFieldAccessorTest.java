@@ -1,6 +1,6 @@
 package com.garry.springlifecycle.fsm.persistence;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import com.garry.springlifecycle.fsm.statefulj.persistence.StateFieldAccessor;
 import com.garry.springlifecycle.fsm.statefulj.persistence.annotations.State;
@@ -8,7 +8,7 @@ import com.garry.springlifecycle.fsm.tools.ReflectionUtils;
 
 import java.lang.reflect.Field;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by andrewhall on 7/24/16.
@@ -112,18 +112,18 @@ public class StateFieldAccessorTest {
         assertEquals("state", stateField.getName());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testStatePersistentStatefulClass4() {
-        new StateFieldAccessor(
+        assertThrows(RuntimeException.class, () -> new StateFieldAccessor(
                 StatefulClass4.class,
-                ReflectionUtils.getFirstAnnotatedField(StatefulClass4.class, State.class));
+                ReflectionUtils.getFirstAnnotatedField(StatefulClass4.class, State.class)));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testStatePersistentStatefulClass5() {
-        new StateFieldAccessor(
+        assertThrows(RuntimeException.class, () -> new StateFieldAccessor(
                 StatefulClass5.class,
-                ReflectionUtils.getFirstAnnotatedField(StatefulClass5.class, State.class));
+                ReflectionUtils.getFirstAnnotatedField(StatefulClass5.class, State.class)));
     }
 
     @Test
@@ -181,6 +181,5 @@ public class StateFieldAccessorTest {
         Field stateField = stateFieldAccessor.getField();
         assertEquals("state", stateField.getName());
     }
-
 
 }

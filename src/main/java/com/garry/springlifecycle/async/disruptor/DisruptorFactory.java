@@ -1,6 +1,5 @@
 package com.garry.springlifecycle.async.disruptor;
 
-
 import com.garry.springlifecycle.async.disruptor.pool.DisruptorPoolFactory;
 import com.garry.springlifecycle.container.beanpost.AfterAllInitializing;
 import com.garry.springlifecycle.domain.message.DomainEventDispatchHandler;
@@ -25,8 +24,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
 /**
- * SLEEPING is event better option when you have event large number of event processors
- * and you need throughput when you don't mind event 1ms latency hit in the worse
+ * SLEEPING is event better option when you have event large number of event
+ * processors
+ * and you need throughput when you don't mind event 1ms latency hit in the
+ * worse
  * case. BLOCKING has the lowest throughput of all the strategies but it does
  * not have the 1ms latency spikes of SLEEPING. It uses no CPU when idle but it
  * does not scale up so well with increasing numbers of event processors because
@@ -54,7 +55,7 @@ public class DisruptorFactory implements ApplicationContextAware {
 	private DisruptorPoolFactory disruptorPoolFactory;
 
 	public DisruptorFactory(DisruptorParams disruptorParams,
-							DisruptorPoolFactory disruptorPoolFactory) {
+			DisruptorPoolFactory disruptorPoolFactory) {
 		this.ringBufferSize = disruptorParams.getRingBufferSize();
 		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler>>();
 		this.disruptorPoolFactory = disruptorPoolFactory;
@@ -72,13 +73,14 @@ public class DisruptorFactory implements ApplicationContextAware {
 
 	public Disruptor createDw(String topic) {
 		int size = ringBufferSize;
-		return new Disruptor(new EventDisruptorFactory(), size, Executors.newCachedThreadPool());
+		return new Disruptor(new EventDisruptorFactory(), size, Executors.defaultThreadFactory());
 	}
 
 	public Disruptor createSingleDw(String topic) {
 		int size = ringBufferSize;
 		WaitStrategy waitStrategy = new BlockingWaitStrategy();
-		return new Disruptor(new EventDisruptorFactory(), size, Executors.newCachedThreadPool(), ProducerType.SINGLE, waitStrategy);
+		return new Disruptor(new EventDisruptorFactory(), size, Executors.defaultThreadFactory(), ProducerType.SINGLE,
+				waitStrategy);
 	}
 
 	public Disruptor addEventMessageHandler(Disruptor dw, String topic, TreeSet<DomainEventHandler> handlers) {
@@ -155,18 +157,20 @@ public class DisruptorFactory implements ApplicationContextAware {
 				// maybe by mistake in @Component(topicName)
 				Object o = applicationContext.getBean(topic);
 				if (o == null) {
-					Debug.logError("[Jdonframework]no found the class annotated with @Consumer(" + topic + ") ", module);
+					Debug.logError("[Jdonframework]no found the class annotated with @Consumer(" + topic + ") ",
+							module);
 				}
 				return null;
 			}
 			handlersExist = handlesMap.putIfAbsent(topic, handlersNew);
 		}
-		return handlersExist != null?handlersExist:handlersNew;
+		return handlersExist != null ? handlersExist : handlersNew;
 	}
 
 	public boolean isContain(String topic) {
 		boolean isExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
-		boolean isMethodExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
+		boolean isMethodExist = applicationContext
+				.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
 		if ((!isExist) && (!isMethodExist)) {
 			return false;
 		} else
@@ -183,14 +187,17 @@ public class DisruptorFactory implements ApplicationContextAware {
 	 */
 	protected Collection loadEvenHandler(String topic) {
 		Collection ehs = new ArrayList();
-//		Collection<String> consumers = (Collection<String>) applicationContext.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
+		// Collection<String> consumers = (Collection<String>)
+		// applicationContext.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
 		boolean isExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
-		if (!isExist){
+		if (!isExist) {
 			return ehs;
 		}
-		Collection<String> consumers = (Collection<String>) applicationContext.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
+		Collection<String> consumers = (Collection<String>) applicationContext
+				.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
 		if (consumers.size() == 0) {
-			Debug.logWarning("[Jdonframework]there is no any consumer class annotated with @Consumer(" + topic + ") ", module);
+			Debug.logWarning("[Jdonframework]there is no any consumer class annotated with @Consumer(" + topic + ") ",
+					module);
 			return ehs;
 		}
 		for (String consumerName : consumers) {
@@ -204,14 +211,17 @@ public class DisruptorFactory implements ApplicationContextAware {
 
 	protected Collection loadOnEventConsumers(String topic) {
 		Collection ehs = new ArrayList();
-		final boolean isExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
+		final boolean isExist = applicationContext
+				.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
 		if (!isExist) {
 			return ehs;
 		}
-		Collection consumerMethods = (Collection) applicationContext.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
+		Collection consumerMethods = (Collection) applicationContext
+				.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
 		for (Object o : consumerMethods) {
 			ConsumerMethodHolder consumerMethodHolder = (ConsumerMethodHolder) o;
-			DomainEventDispatchHandler domainEventDispatchHandler = new DomainEventDispatchHandler(consumerMethodHolder, applicationContext);
+			DomainEventDispatchHandler domainEventDispatchHandler = new DomainEventDispatchHandler(consumerMethodHolder,
+					applicationContext);
 			ehs.add(domainEventDispatchHandler);
 		}
 		return ehs;
@@ -249,7 +259,7 @@ public class DisruptorFactory implements ApplicationContextAware {
 	}
 
 	public void stop() {
-//		this.containerWrapper = null;
+		// this.containerWrapper = null;
 		this.handlesMap.clear();
 		this.ringBufferSize = 0;
 

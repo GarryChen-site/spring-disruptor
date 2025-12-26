@@ -15,7 +15,7 @@
 
 package com.garry.springlifecycle.controller.pool;
 
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 
 /**
  * ObjectPool pool = new StackObjectPool(new MyPoolableObjectFactory());
@@ -28,19 +28,19 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  *         </p>
  */
 public class CommonsPoolAdapter implements Pool {
-	private final GenericObjectPool pool;
+	private final GenericObjectPool<Object> pool;
 
-	public CommonsPoolAdapter(GenericObjectPool pool) {
+	public CommonsPoolAdapter(GenericObjectPool<Object> pool) {
 
 		this.pool = pool;
 	}
 
 	public void setMaxPoolSize(int maxPoolSize) {
-		pool.setMaxActive(maxPoolSize);
+		pool.setMaxTotal(maxPoolSize);
 	}
 
 	public int getMaxPoolSize() {
-		return pool.getMaxActive();
+		return pool.getMaxTotal();
 	}
 
 	public Object acquirePoolable() throws Exception {

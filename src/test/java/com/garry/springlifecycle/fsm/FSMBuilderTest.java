@@ -1,7 +1,7 @@
 package com.garry.springlifecycle.fsm;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.garry.springlifecycle.fsm.statefulj.fsm.FSM;
 import com.garry.springlifecycle.fsm.statefulj.fsm.RetryException;
 import com.garry.springlifecycle.fsm.statefulj.fsm.TooBusyException;
@@ -13,7 +13,7 @@ import com.garry.springlifecycle.fsm.statefulj.fsm.model.impl.StateImpl;
 import com.garry.springlifecycle.fsm.statefulj.persistence.annotations.State;
 import com.garry.springlifecycle.fsm.statefulj.persistence.memory.MemoryPersistentImpl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by andrewhall on 6/2/16.
@@ -30,7 +30,7 @@ public class FSMBuilderTest {
 
     FSM<FooState> fooStateFSM;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Action action = new Action() {
                     @Override

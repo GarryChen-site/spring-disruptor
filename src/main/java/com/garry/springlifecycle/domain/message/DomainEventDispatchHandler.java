@@ -36,6 +36,7 @@ public class DomainEventDispatchHandler implements DomainEventHandler<EventDisru
 		return o.getClass().getName();
 	}
 
+	// 回调消息
 	@Override
 	public void onEvent(EventDisruptor event, final boolean endOfBatch) throws Exception {
 		try {

@@ -18,7 +18,7 @@
 package com.garry.springlifecycle.fsm;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import com.garry.springlifecycle.fsm.statefulj.fsm.FSM;
 import com.garry.springlifecycle.fsm.statefulj.fsm.Persistent;
 import com.garry.springlifecycle.fsm.statefulj.fsm.RetryException;
@@ -36,11 +36,10 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class FSMTest {
-
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -100,7 +99,8 @@ public class FSMTest {
 		verify(actionA, never()).execute(stateful, eventA, arg);
 		verify(actionB, never()).execute(stateful, eventA, arg);
 
-		// Verify that on eventB from StateB, we transition to stateC - the endState, and
+		// Verify that on eventB from StateB, we transition to stateC - the endState,
+		// and
 		// call actionB with the correct args
 		//
 		current = fsm.onEvent(stateful, eventB, arg);
@@ -183,7 +183,8 @@ public class FSMTest {
 		final FSM<Foo> fsm = new FSM<Foo>("ConcurrentFSM");
 		WaitAndRetryActionImpl<Foo> wra = new WaitAndRetryActionImpl<Foo>(100); // wait 100 ms and retry
 
-		// This action will wait for 250ms then invoke the com.garry.springlifecycle.fsm with eventA.
+		// This action will wait for 250ms then invoke the com.garry.springlifecycle.fsm
+		// with eventA.
 		// This should transition the FSM back to stateA
 		//
 		Action<Foo> waitAction = new Action<Foo>() {
@@ -233,7 +234,8 @@ public class FSMTest {
 		//
 		fsm.setPersistent(persister);
 
-		// Kick off a thread that will invoke the com.garry.springlifecycle.fsm with eventA
+		// Kick off a thread that will invoke the com.garry.springlifecycle.fsm with
+		// eventA
 		//
 		final Foo args = null;
 		new Thread(new Runnable() {
@@ -269,8 +271,8 @@ public class FSMTest {
 
 	}
 
-	@Test(expected=TooBusyException.class)
-	public void testTooBusy() throws TooBusyException {
+	@Test
+	public void testTooBusy() {
 
 		// Stateful
 		//
@@ -308,11 +310,11 @@ public class FSMTest {
 
 		// Boom
 		//
-		fsm.onEvent(stateful, eventA);
+		assertThrows(TooBusyException.class, () -> fsm.onEvent(stateful, eventA));
 	}
 
 	@Test
-	public void testRetryInterval()  {
+	public void testRetryInterval() {
 
 		// Stateful
 		//
@@ -348,8 +350,8 @@ public class FSMTest {
 		assertTrue((end - start) < 600);
 	}
 
-	@Test(expected=TooBusyException.class)
-	public void testBlocking() throws TooBusyException {
+	@Test
+	public void testBlocking() {
 
 		// Stateful
 		//
@@ -374,11 +376,11 @@ public class FSMTest {
 
 		// Boom
 		//
-		fsm.onEvent(stateful, eventA);
+		assertThrows(TooBusyException.class, () -> fsm.onEvent(stateful, eventA));
 	}
 
-	@Test(expected=TooBusyException.class)
-	public void testRetryFailureOnTransition() throws TooBusyException {
+	@Test
+	public void testRetryFailureOnTransition() {
 
 		// Stateful
 		//
@@ -394,7 +396,8 @@ public class FSMTest {
 		stateA.addTransition(eventA, new Transition<Foo>() {
 
 			@Override
-			public StateActionPair<Foo> getStateActionPair(Foo stateful, String event, Object... args) throws RetryException {
+			public StateActionPair<Foo> getStateActionPair(Foo stateful, String event, Object... args)
+					throws RetryException {
 				throw new RetryException();
 			}
 
@@ -411,7 +414,7 @@ public class FSMTest {
 
 		// Boom
 		//
-		fsm.onEvent(stateful, eventA);
+		assertThrows(TooBusyException.class, () -> fsm.onEvent(stateful, eventA));
 	}
 
 	@Test

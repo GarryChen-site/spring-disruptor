@@ -1,12 +1,10 @@
 package com.garry.springlifecycle.async.disruptor.pool;
 
-
 import com.garry.springlifecycle.async.disruptor.DisruptorForCommandFactory;
 import com.garry.springlifecycle.async.disruptor.EventDisruptor;
 import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.LifecycleAware;
 
-public class DomainCommandHandlerFirst implements EventHandler<EventDisruptor>, LifecycleAware {
+public class DomainCommandHandlerFirst implements EventHandler<EventDisruptor> {
 
 	private DisruptorForCommandFactory disruptorForCommandFactory;
 	private DisruptorSwitcher disruptorSwitcher;
@@ -15,18 +13,6 @@ public class DomainCommandHandlerFirst implements EventHandler<EventDisruptor>, 
 		super();
 		this.disruptorSwitcher = new DisruptorSwitcher();
 		this.disruptorForCommandFactory = disruptorForCommandFactory;
-	}
-
-	@Override
-	public void onShutdown() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onStart() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
