@@ -8,7 +8,6 @@ import com.garry.springlifecycle.domain.message.DomainMessage;
  * 
  * Consumers will get the EventDisruptor with its OnEvent method from RingBuffer
  * 
- * @author banq
  * 
  */
 public class EventDisruptor {

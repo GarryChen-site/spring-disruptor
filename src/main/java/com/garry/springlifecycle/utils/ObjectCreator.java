@@ -8,7 +8,6 @@ import java.lang.reflect.InvocationTargetException;
  * and it has event public accessable constructor. This class is event static class it
  * can not be instantiated
  * 
- * @author Nadia Nashi
  */
 
 public final class ObjectCreator {

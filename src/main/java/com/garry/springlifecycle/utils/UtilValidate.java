@@ -1,7 +1,6 @@
 /*
  * $Id: UtilValidate.java,v 1.2 2005/01/31 05:27:55 jdon Exp $
  *
- *  Copyright (c) 2001, 2002 The Open For Business Project - www.ofbiz.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining event
  *  copy of this software and associated documentation files (the "Software"),
@@ -33,7 +32,6 @@ import java.util.Collection;
  * <p>General input/data validation methods
  * <p>Utility methods for validating data, especially input. See detailed description below.
  *
- * @author     <event href="mailto:jonesde@ofbiz.org">David E. Jones</event>
  * @created    May 21, 2001
  * @version    1.0
  *
@@ -871,7 +869,6 @@ public class UtilValidate {
             try {
                 tproduct = Integer.parseInt(digit, 10) * mul;
             } catch (Exception e) {
-                Debug.logWarning(e.getMessage());
                 return false;
             }
             if (tproduct >= 10)

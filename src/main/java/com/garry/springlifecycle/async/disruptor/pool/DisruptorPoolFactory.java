@@ -2,7 +2,6 @@ package com.garry.springlifecycle.async.disruptor.pool;
 
 
 import com.garry.springlifecycle.async.disruptor.DisruptorFactory;
-import com.garry.springlifecycle.utils.Debug;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +79,6 @@ public class DisruptorPoolFactory  {
 		if (disruptor == null) {
 			disruptor = createAutoDisruptor(topic);
 			if (disruptor == null) {
-				Debug.logWarning("not create disruptor for " + topic, module);
 				return null;
 			}
 			Disruptor disruptorOLd = topicDisruptors.putIfAbsent(topic, disruptor);

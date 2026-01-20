@@ -4,7 +4,6 @@ package com.garry.springlifecycle.domain.message;
 
 import com.garry.springlifecycle.async.disruptor.EventDisruptor;
 import com.garry.springlifecycle.domain.message.consumer.ConsumerMethodHolder;
-import com.garry.springlifecycle.utils.Debug;
 import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Method;
@@ -15,7 +14,6 @@ import java.util.Map;
  * action by annotation "@onEvent("topicName")"
  * 
  * 
- * @author banq
  * 
  */
 public class DomainEventDispatchHandler implements DomainEventHandler<EventDisruptor> {
@@ -48,7 +46,6 @@ public class DomainEventDispatchHandler implements DomainEventHandler<EventDisru
 			}
 			Object parameter = event.getDomainMessage().getEventSource();
 			if (parameter == null) {
-				Debug.logError("[Jdonframework]DomainMessage's EventSource is null, need " + pTypes[0].getName(), module);
 				return;
 			}
 
@@ -70,7 +67,6 @@ public class DomainEventDispatchHandler implements DomainEventHandler<EventDisru
 			Object eventResult = method.invoke(o, parameters);
 			event.getDomainMessage().setEventResult(eventResult);
 		} catch (Exception e) {
-			Debug.logError("[Jdonframework]" + consumerMethodHolder.getClassName() + " method with @onEvent error: " + e, module);
 		}
 
 	}

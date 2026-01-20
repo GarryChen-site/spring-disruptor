@@ -1,7 +1,6 @@
 package com.garry.springlifecycle.domain.proxy;
 
 
-import com.garry.springlifecycle.utils.Debug;
 import net.sf.cglib.proxy.MethodProxy;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -35,7 +34,6 @@ public class ModelMethodInvocation implements MethodInvocation {
 
 	public Object proceed() throws Throwable {
 		if (currentInterceptorInt == interceptors.size() - 1) {
-			Debug.logVerbose("[JdonFramework] finish call all inteceptors", module);
 			return methodProxy.invokeSuper(target, args);
 		}
 
@@ -44,7 +42,6 @@ public class ModelMethodInvocation implements MethodInvocation {
 			MethodInterceptor methodInterceptor = (MethodInterceptor) interceptor;
 			return methodInterceptor.invoke(this);
 		} else {
-			Debug.logVerbose("[JdonFramework] null finish call all inteceptors", module);
 			return methodProxy.invokeSuper(target, args);
 		}
 

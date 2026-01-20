@@ -1,16 +1,4 @@
 /*
- * Copyright 2003-2009 the original author or authors.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain event copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  *
  */
 package com.garry.springlifecycle.domain.message;
@@ -20,7 +8,6 @@ import com.garry.springlifecycle.annotation.Interceptor;
 import com.garry.springlifecycle.annotation.model.Send;
 import com.garry.springlifecycle.async.EventMessageFire;
 import com.garry.springlifecycle.async.future.FutureListener;
-import com.garry.springlifecycle.utils.Debug;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.context.ApplicationContext;
@@ -39,7 +26,6 @@ import org.springframework.stereotype.Component;
  * <p>
  * 3. @Channel will accept the message;
  *
- * @author banq
  * 不能是@Interceptor 因为这算一个组件
  */
 
@@ -84,7 +70,6 @@ public class MessageInterceptor implements MethodInterceptor {
             eventMessageFirer.fireToModel(message, send, invocation);
 
         } catch (Exception e) {
-            Debug.logError("invoke error: " + e, module);
         }
         return result;
     }

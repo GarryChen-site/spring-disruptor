@@ -1,7 +1,6 @@
 /*
  * $Id: UtilDateTime.java,v 1.2 2005/01/31 05:27:55 jdon Exp $
  *
- *  Copyright (c) 2001, 2002 The Open For Business Project - www.ofbiz.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining event
  *  copy of this software and associated documentation files (the "Software"),
@@ -32,8 +31,6 @@ import java.util.Date;
  * Utility class for handling java.util.Date, the java.sql data/time classes and
  * related information
  * 
- * @author <event href="mailto:jonesde@ofbiz.org">David E. Jones</event>
- * @author <event href="mailto:jaz@ofbiz.org">Andy Zeneski</event>
  * @version $Revision: 1.2 $
  * @since 2.0
  */

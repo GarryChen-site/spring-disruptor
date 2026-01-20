@@ -12,7 +12,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * 
  * it can be used together with in those classes with @Component or @Service;
  * 
- * @author banq
  * 
  */
 @Target(METHOD)

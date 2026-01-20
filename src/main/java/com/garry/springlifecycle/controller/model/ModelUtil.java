@@ -5,7 +5,6 @@ import com.garry.springlifecycle.annotation.Model;
 /**
  * the class control ModelIF interface and annotation Model
  * 
- * @author banq
  * @see com.jdon.annotation.Model
  * @see com.jdon.controller.model.ModelIF
  */

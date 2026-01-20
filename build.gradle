@@ -18,8 +18,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'com.lmax:disruptor:4.0.0'
-    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
-    implementation 'org.jdom:jdom2:2.0.6.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
     implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
     implementation 'org.apache.commons:commons-pool2:2.12.0'

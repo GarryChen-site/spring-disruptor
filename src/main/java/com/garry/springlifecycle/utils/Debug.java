@@ -1,27 +1,3 @@
-/*
- * $Id: Debug.java,v 1.2 2005/01/31 05:27:54 jdon Exp $
- *
- *  Copyright (c) 2001, 2002 The Open For Business Project - www.ofbiz.org
- *
- *  Permission is hereby granted, free of charge, to any person obtaining event
- *  copy of this software and associated documentation files (the "Software"),
- *  to deal in the Software without restriction, including without limitation
- *  the rights to use, copy, modify, merge, publish, distribute, sublicense,
- *  and/or sell copies of the Software, and to permit persons to whom the
- *  Software is furnished to do so, subject to the following conditions:
- *
- *  The above copyright notice and this permission notice shall be included
- *  in all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- *  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- *  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
- *  OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
- *  THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package com.garry.springlifecycle.utils;
 
 import org.apache.logging.log4j.Level;
@@ -34,11 +10,6 @@ import java.text.DateFormat;
 
 /**
  * Configurable Debug logging wrapper class
- * 
- * @author <event href="mailto:jonesde@ofbiz.org">David E. Jones</event>
- * @author <event href="mailto:jaz@zsolv.com">Andy Zeneski</event>
- * @version 1.0
- * @created July 1, 2001
  */
 public final class Debug {
 
@@ -51,7 +22,8 @@ public final class Debug {
 	public static boolean useLog4J = false;
 	public static DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
 
-	private final static PropsUtil propsUtil = new PropsUtil("log.xml");
+	// Default configuration (no XML dependency)
+	public static int conf_level = 1; // Default to VERBOSE level
 
 	public static final int ALWAYS = 0;
 	public static final int VERBOSE = 1;
@@ -62,34 +34,16 @@ public final class Debug {
 	public static final int ERROR = 6;
 	public static final int FATAL = 7;
 
-	public static int conf_level = -1;
-
-	public static final String[] levels = { "Always", "Verbose", "Timing", "Info", "Important", "Warning", "Error", "Fatal" };
-	public static final String[] levelProps = { "", "print.verbose", "print.timing", "print.info", "print.important", "print.warning", "print.error",
+	public static final String[] levels = { "Always", "Verbose", "Timing", "Info", "Important", "Warning", "Error",
+			"Fatal" };
+	public static final String[] levelProps = { "", "print.verbose", "print.timing", "print.info", "print.important",
+			"print.warning", "print.error",
 			"print.fatal" };
-	public static final Level[] levelObjs = { Level.INFO, Level.DEBUG, Level.DEBUG, Level.INFO, Level.INFO, Level.WARN, Level.ERROR, Level.FATAL };
+	public static final Level[] levelObjs = { Level.INFO, Level.DEBUG, Level.DEBUG, Level.INFO, Level.INFO, Level.WARN,
+			Level.ERROR, Level.FATAL };
 
 	protected static PrintStream printStream = System.out;
 	protected static PrintWriter printWriter = new PrintWriter(printStream);
-
-	static {
-		try {
-			String levelStrs = propsUtil.getProperty(LOG);
-			if (levelStrs != null) {
-				conf_level = Integer.parseInt(levelStrs);
-			}
-
-			String log4jStrs = propsUtil.getProperty(LOG4J);
-			if (log4jStrs != null)
-				if (log4jStrs.equalsIgnoreCase("true"))
-					useLog4J = true;
-
-		} catch (Exception e) {
-			System.err.print("getLogLevel e");
-			conf_level = 1;
-			useLog4J = false;
-		}
-	}
 
 	public static PrintStream getPrintStream() {
 		return printStream;

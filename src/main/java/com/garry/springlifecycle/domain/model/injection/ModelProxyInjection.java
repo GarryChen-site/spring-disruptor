@@ -7,7 +7,6 @@ import com.garry.springlifecycle.annotation.JDService;
 import com.garry.springlifecycle.annotation.model.Inject;
 import com.garry.springlifecycle.domain.advsior.ModelAdvisor;
 import com.garry.springlifecycle.utils.ClassUtil;
-import com.garry.springlifecycle.utils.Debug;
 import com.garry.springlifecycle.utils.ObjectCreator;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -35,7 +34,6 @@ import java.util.List;
  * 
  *                       }
  * 
- * @author xmuzyu
  * 
  */
 @Component
@@ -77,7 +75,6 @@ public class ModelProxyInjection implements ApplicationContextAware {
 			}
 
 		} catch (Exception e) {
-			Debug.logError("inject Properties error:" + e + " in " + targetModel.getClass() + "'s field: " + fClass, module);
 		}
 	}
 
@@ -95,7 +92,6 @@ public class ModelProxyInjection implements ApplicationContextAware {
 			o = ObjectCreator.createObject(fClass);
 			o = modelAdvisor.createProxy(o);
 		} catch (Exception e) {
-			Debug.logError("createTargetObject error:" + e + " in " + targetModel.getClass(), module);
 		}
 		return o;
 
@@ -113,7 +109,6 @@ public class ModelProxyInjection implements ApplicationContextAware {
 			if (o != null)
 				o = modelAdvisor.createProxy(o);
 		} catch (Exception e) {
-			Debug.logError("createTargetComponent error:" + e + " in" + targetModel.getClass(), module);
 		}
 		return o;
 

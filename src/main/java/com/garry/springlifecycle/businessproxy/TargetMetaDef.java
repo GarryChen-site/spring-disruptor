@@ -10,7 +10,6 @@ import java.io.Serializable;
  * meta definition for service
  *
  *
- * @author banq
  */
 public interface TargetMetaDef extends Serializable {
 

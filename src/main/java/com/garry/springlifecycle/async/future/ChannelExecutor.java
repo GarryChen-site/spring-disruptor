@@ -3,7 +3,6 @@ package com.garry.springlifecycle.async.future;
 
 
 import com.garry.springlifecycle.domain.message.DomainMessage;
-import com.garry.springlifecycle.utils.Debug;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +27,6 @@ public class ChannelExecutor {
 				eventMessageFuture.getFutureTask().run();
 			}
 		} catch (Exception e) {
-			Debug.logError("[JdonFramework]actionChannelListener() error" + e, module);
 		}
 	}
 

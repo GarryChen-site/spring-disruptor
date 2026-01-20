@@ -5,7 +5,6 @@ package com.garry.springlifecycle.domain.message.consumer;
 import com.garry.springlifecycle.async.disruptor.EventDisruptor;
 import com.garry.springlifecycle.domain.message.Command;
 import com.garry.springlifecycle.domain.message.DomainEventHandler;
-import com.garry.springlifecycle.utils.Debug;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ public class DomainCommandDispatchHandler implements DomainEventHandler<EventDis
 			Method method = modelConsumerMethodHolder.getConsumerMethodHolder().getMethod();
 			Object model = ((Command) event.getDomainMessage()).getDestination();
 			if (model == null) {
-				Debug.logError("[Jdonframework]Destination that will be sent is null ", module);
 				return;
 			}
 			Class[] pTypes = method.getParameterTypes();
@@ -36,7 +34,6 @@ public class DomainCommandDispatchHandler implements DomainEventHandler<EventDis
 			}
 			Object parameter = event.getDomainMessage().getEventSource();
 			if (parameter == null) {
-				Debug.logError("[Jdonframework]the publisher method with @Send need return type" + pTypes[0].getName(), module);
 				return;
 			}
 
@@ -51,7 +48,6 @@ public class DomainCommandDispatchHandler implements DomainEventHandler<EventDis
 						try {
 							parameters[i] = pType.newInstance();
 						} catch (Exception e) {
-							Debug.logError("[Jdonframework] " + pType.getName() + " no default construtor :" + e, module);
 							e.printStackTrace();
 						}
 					} else
@@ -62,8 +58,6 @@ public class DomainCommandDispatchHandler implements DomainEventHandler<EventDis
 			Object eventResult = method.invoke(model, parameters);
 			event.getDomainMessage().setEventResult(eventResult);
 		} catch (Exception e) {
-			Debug.logError("[Jdonframework]" + modelConsumerMethodHolder.getConsumerMethodHolder().getClassName()
-					+ " method with @onCommand  happended error: " + e, module);
 		}
 
 	}

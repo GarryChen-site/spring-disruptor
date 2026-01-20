@@ -124,8 +124,6 @@ package com.garry.springlifecycle.utils;
  * periodically to check for updates or to contribute improvements.
  * </p>
  *
- * @author Robert Harder
- * @author rob@iharder.net
  * @version 2.3.3
  */
 public class Base64

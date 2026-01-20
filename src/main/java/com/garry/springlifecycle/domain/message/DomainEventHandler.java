@@ -26,7 +26,6 @@ import com.garry.springlifecycle.async.disruptor.EventDisruptor;
  * 5. the consumer class must implements
  * com.jdon.domain.message.DomainEventHandler
  * 
- * @author banq
  * 
  * @param <EventDisruptor>
  */

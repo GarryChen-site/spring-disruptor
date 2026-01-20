@@ -1,6 +1,5 @@
 package com.garry.springlifecycle.async;
 
-
 import com.garry.springlifecycle.annotation.model.Owner;
 import com.garry.springlifecycle.annotation.model.Receiver;
 import com.garry.springlifecycle.annotation.model.Send;
@@ -15,7 +14,6 @@ import com.garry.springlifecycle.domain.message.Command;
 import com.garry.springlifecycle.domain.message.DomainMessage;
 import com.garry.springlifecycle.domain.message.consumer.ModelConsumerMethodHolder;
 import com.garry.springlifecycle.domain.model.injection.ModelProxyInjection;
-import com.garry.springlifecycle.utils.Debug;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -35,8 +33,9 @@ public class EventMessageFire {
     private FutureDirector futureDirector;
     private ModelProxyInjection modelProxyInjection;
 
-    public EventMessageFire(DisruptorFactory disruptorFactory, DisruptorForCommandFactory disruptorForCommandFactory, FutureDirector futureDirector,
-                            ModelProxyInjection modelProxyInjection) {
+    public EventMessageFire(DisruptorFactory disruptorFactory, DisruptorForCommandFactory disruptorForCommandFactory,
+            FutureDirector futureDirector,
+            ModelProxyInjection modelProxyInjection) {
         super();
         this.disruptorFactory = disruptorFactory;
         this.disruptorForCommandFactory = disruptorForCommandFactory;
@@ -69,7 +68,6 @@ public class EventMessageFire {
             return;
         }
         if (!disruptorFactory.isContain(topic)) {
-            Debug.logError(" no found any consumer annonated with @Consumer or its methods with @OnEvent for topic=" + topic, module);
             return;
         }
 
@@ -77,7 +75,6 @@ public class EventMessageFire {
 
             Disruptor disruptor = disruptorFactory.getDisruptor(topic);
             if (disruptor == null) {
-                Debug.logWarning("not create disruptor for " + topic, module);
                 return;
             }
 
@@ -92,7 +89,6 @@ public class EventMessageFire {
             ringBuffer.publish(sequence);
 
         } catch (Exception e) {
-            Debug.logError("fire error: " + e.getMessage() + " for" + send.value() + " from:" + domainMessage.getEventSource() + " ", module);
         } finally {
 
         }
@@ -102,21 +98,18 @@ public class EventMessageFire {
         String topic = send.value();
         if (disruptorFactory.isContain(topic))
             return;
-        ModelConsumerMethodHolder modelConsumerMethodHolder = disruptorForCommandFactory.getModelConsumerMethodHolder(topic);
+        ModelConsumerMethodHolder modelConsumerMethodHolder = disruptorForCommandFactory
+                .getModelConsumerMethodHolder(topic);
         if (modelConsumerMethodHolder == null) {
-            Debug.logError(" no found any consumer annonated with @OnCommand for topic=" + topic, module);
             return;
         }
         Object[] arguments = invocation.getArguments();
         if (arguments.length == 0) {
-            Debug.logError("there is no event destination parameter(@Receiver) in this method:" + invocation.getMethod().getName() + topic, module);
             return;
         }
 
         Map params = fetchCommandReceiver(invocation.getMethod(), arguments);
         if (params.size() == 0 || !ModelUtil.isModel(params.get("Receiver"))) {
-            Debug.logError(" there is no event destination parameter(@Receiver)  in this method:" + invocation.getMethod().getName()
-                    + " or the destination class not annotated with @Model", module);
             return;
         }
         //
@@ -132,7 +125,6 @@ public class EventMessageFire {
 
         Disruptor disruptor = disruptorForCommandFactory.getDisruptor(topic, owner);
         if (disruptor == null) {
-            Debug.logWarning("not create command disruptor for " + topic, module);
             return;
         }
 
@@ -149,8 +141,7 @@ public class EventMessageFire {
             ringBuffer.publish(sequence);
 
         } catch (Exception e) {
-            Debug.logError("fireToModel error: " + send.value() + " domainMessage:" + domainMessage.getEventSource() + " mode:"
-                    + arguments[0].getClass().getName(), module);
+            // Error handling silently
         } finally {
 
         }

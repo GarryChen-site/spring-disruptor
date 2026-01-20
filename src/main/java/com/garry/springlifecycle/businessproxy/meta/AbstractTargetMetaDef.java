@@ -7,7 +7,6 @@ import com.garry.springlifecycle.businessproxy.TargetMetaDef;
  * TargetMetaDef abstract concrete class
  * implements some common functions for pojo or ejb
  * 
- * @author <event href="mailto:banqiao@jdon.com">banq</event>
  *
  */
 public abstract class AbstractTargetMetaDef implements TargetMetaDef, Cloneable {

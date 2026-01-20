@@ -3,7 +3,6 @@ package com.garry.springlifecycle.businessproxy.target;
 
 import com.garry.springlifecycle.businessproxy.TargetMetaDef;
 import com.garry.springlifecycle.container.access.TargetMetaRequestsHolder;
-import com.garry.springlifecycle.utils.Debug;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * Factory that create target service object
  * 
  * 
- * @author banq
  */
 @Component
 public class DefaultTargetServiceFactory implements TargetServiceFactory {
@@ -35,7 +33,6 @@ public class DefaultTargetServiceFactory implements TargetServiceFactory {
 			TargetObjectFactory targetObjectFactory = targetMetaDef.getTargetObjectFactory();
 			o = targetObjectFactory.create(applicationContext);
 		} catch (Exception ex) {
-			Debug.logError("[JdonFramework]create error: " + ex + " " + targetMetaDef.getClassName(), module);
 		} finally {
 		}
 		return o;

@@ -16,7 +16,6 @@ import java.util.Map;
  * instance, if multi thread access same TargetMetaDef instance, they will
  * crash.
  * 
- * @author banq
  * 
  */
 @Component

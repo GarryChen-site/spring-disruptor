@@ -1,7 +1,6 @@
 package com.garry.springlifecycle.domain.proxy;
 
 
-import com.garry.springlifecycle.utils.Debug;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -31,7 +30,6 @@ import org.springframework.stereotype.Component;
  *                                           the DomainMessage to the Listener
  *                                           named "MyModel.findName".
  * 
- * @author xmuzyu banq
  * 
  */
 @Component
@@ -51,7 +49,6 @@ public class ModelProxyFactory {
 			enhancer.setSuperclass(modelClass);
 			dynamicProxy = enhancer.create();
 		} catch (Exception e) {
-			Debug.logError("create error " + e, module);
 		}
 		return dynamicProxy;
 	}

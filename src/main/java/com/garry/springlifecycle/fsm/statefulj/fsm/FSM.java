@@ -159,7 +159,6 @@ public class FSM<T> {
     /**
      * Fluid FSM builder
      *
-     * @author Andrew Hall
      *
      * @param <T> Type of the Stateful Entity
      */
@@ -168,7 +167,6 @@ public class FSM<T> {
         /**
          * Fluid State Builder
          *
-         * @author Andrew Hall
          *
          * @param <T> Type of the Stateful Entity
          */
@@ -177,7 +175,6 @@ public class FSM<T> {
             /**
              * Fluid Transition Builder
              *
-             * @author Andrew Hall
              *
              * @param <T> Type of the Stateful Entity
              */

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 /**
  * POJO Service Meta Definition
  * 
- * @author <event href="mailto:banqiao@jdon.com">banq</event>
  * 
  */
 public class POJOTargetMetaDef extends AbstractTargetMetaDef {

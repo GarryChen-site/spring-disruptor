@@ -5,7 +5,6 @@ import com.garry.springlifecycle.container.beanpost.AfterAllInitializing;
 import com.garry.springlifecycle.domain.message.DomainEventDispatchHandler;
 import com.garry.springlifecycle.domain.message.DomainEventHandler;
 import com.garry.springlifecycle.domain.message.consumer.ConsumerMethodHolder;
-import com.garry.springlifecycle.utils.Debug;
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
@@ -40,7 +39,6 @@ import java.util.concurrent.Executors;
  * you have sufficient cores then all the wait strategies will beat pretty much
  * any other alternative such as queues.
  * 
- * @author banq
  * 
  */
 @Component
@@ -157,8 +155,6 @@ public class DisruptorFactory implements ApplicationContextAware {
 				// maybe by mistake in @Component(topicName)
 				Object o = applicationContext.getBean(topic);
 				if (o == null) {
-					Debug.logError("[Jdonframework]no found the class annotated with @Consumer(" + topic + ") ",
-							module);
 				}
 				return null;
 			}
@@ -196,8 +192,6 @@ public class DisruptorFactory implements ApplicationContextAware {
 		Collection<String> consumers = (Collection<String>) applicationContext
 				.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
 		if (consumers.size() == 0) {
-			Debug.logWarning("[Jdonframework]there is no any consumer class annotated with @Consumer(" + topic + ") ",
-					module);
 			return ehs;
 		}
 		for (String consumerName : consumers) {

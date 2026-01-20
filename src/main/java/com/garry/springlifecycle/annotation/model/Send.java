@@ -72,7 +72,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * 
  * 
  * @see com.jdon.controller.model.ModelIF
- * @author banQ
  * 
  */
 @Target(METHOD)

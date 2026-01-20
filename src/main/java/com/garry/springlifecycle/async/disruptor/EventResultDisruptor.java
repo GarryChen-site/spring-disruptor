@@ -4,7 +4,6 @@ package com.garry.springlifecycle.async.disruptor;
  * 
  * A Consumer send response back to the Subscriber by this value object
  * 
- * @author banq
  * 
  */
 public class EventResultDisruptor {

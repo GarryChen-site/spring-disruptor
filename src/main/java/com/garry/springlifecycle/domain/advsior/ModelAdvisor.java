@@ -5,7 +5,6 @@ package com.garry.springlifecycle.domain.advsior;
 import com.garry.springlifecycle.annotation.Introduce;
 import com.garry.springlifecycle.domain.proxy.ModelCGLIBMethodInterceptorImp;
 import com.garry.springlifecycle.domain.proxy.ModelProxyFactory;
-import com.garry.springlifecycle.utils.Debug;
 import net.sf.cglib.proxy.MethodInterceptor;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *                       as this,the DomainEvent will be enhanced with
  *                       MessageInterceptor
  *
- * @author xmuzyu banq
  *
  */
 @Component
@@ -77,7 +75,6 @@ public class ModelAdvisor implements ApplicationContextAware {
 				}
 			}
 		} catch (Exception e) {
-			Debug.logError(" getAdviceNameAnnotation:" + e, module);
 		}
 		return methodInterceptors;
 	}
