@@ -30,7 +30,7 @@ public class DisruptorFactoryTest {
 
 	@Test
 	public void testGetDisruptor() {
-		TreeSet<DomainEventHandler> handlers = disruptorFactory.getTreeSet();
+		TreeSet<DomainEventHandler<?>> handlers = disruptorFactory.getTreeSet();
 		final DomainEventHandler<EventDisruptor> handler = new DomainEventHandler<EventDisruptor>() {
 			@Override
 			public void onEvent(EventDisruptor event, final boolean endOfBatch) throws Exception {

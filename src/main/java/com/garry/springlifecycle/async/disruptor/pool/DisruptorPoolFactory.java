@@ -1,7 +1,7 @@
 package com.garry.springlifecycle.async.disruptor.pool;
 
-
 import com.garry.springlifecycle.async.disruptor.DisruptorFactory;
+import com.garry.springlifecycle.async.disruptor.EventDisruptor;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.springframework.stereotype.Component;
 
@@ -13,18 +13,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class DisruptorPoolFactory  {
+public class DisruptorPoolFactory {
 	public final static String module = DisruptorPoolFactory.class.getName();
 
 	private DisruptorSwitcher disruptorSwitcher;
 	private DisruptorFactory disruptorFactory;
-	private ConcurrentHashMap<String, Disruptor> topicDisruptors;
+	private ConcurrentHashMap<String, Disruptor<EventDisruptor>> topicDisruptors;
 	private ScheduledExecutorService scheduExecStatic = Executors.newScheduledThreadPool(1);
 
 	public DisruptorPoolFactory() {
 		super();
 		this.disruptorSwitcher = new DisruptorSwitcher();
-		this.topicDisruptors = new ConcurrentHashMap();
+		this.topicDisruptors = new ConcurrentHashMap<>();
 	}
 
 	public void start() {
@@ -48,7 +48,7 @@ public class DisruptorPoolFactory  {
 	}
 
 	private void stopDisruptor() {
-		Map<String, Disruptor> mydisruptors = new HashMap(topicDisruptors);
+		Map<String, Disruptor<EventDisruptor>> mydisruptors = new HashMap<>(topicDisruptors);
 		topicDisruptors.clear();
 		try {
 			Thread.sleep(10000);// wait event while until all disruptor is done;
@@ -56,7 +56,7 @@ public class DisruptorPoolFactory  {
 			e1.printStackTrace();
 		}
 		for (String topic : mydisruptors.keySet()) {
-			Disruptor disruptor = (Disruptor) mydisruptors.get(topic);
+			Disruptor<EventDisruptor> disruptor = mydisruptors.get(topic);
 			try {
 				disruptor.halt();
 			} catch (Exception e) {
@@ -66,7 +66,7 @@ public class DisruptorPoolFactory  {
 
 	}
 
-	public Disruptor createAutoDisruptor(String topic) {
+	public Disruptor<EventDisruptor> createAutoDisruptor(String topic) {
 		if (disruptorSwitcher.getCommandTopic() != null) {
 			return disruptorFactory.createSingleDisruptor(topic);
 		} else
@@ -74,14 +74,14 @@ public class DisruptorPoolFactory  {
 
 	}
 
-	public Disruptor getDisruptor(String topic) {
-		Disruptor disruptor = (Disruptor) topicDisruptors.get(topic);
+	public Disruptor<EventDisruptor> getDisruptor(String topic) {
+		Disruptor<EventDisruptor> disruptor = topicDisruptors.get(topic);
 		if (disruptor == null) {
 			disruptor = createAutoDisruptor(topic);
 			if (disruptor == null) {
 				return null;
 			}
-			Disruptor disruptorOLd = topicDisruptors.putIfAbsent(topic, disruptor);
+			Disruptor<EventDisruptor> disruptorOLd = topicDisruptors.putIfAbsent(topic, disruptor);
 			if (disruptorOLd != null)
 				disruptor = disruptorOLd;
 		}

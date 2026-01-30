@@ -1,6 +1,7 @@
 package com.garry.springlifecycle.async.disruptor.pool;
 
 import com.garry.springlifecycle.async.disruptor.DisruptorForCommandFactory;
+import com.garry.springlifecycle.async.disruptor.EventDisruptor;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.springframework.stereotype.Component;
 
@@ -12,16 +13,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class DisruptorCommandPoolFactory  {
+public class DisruptorCommandPoolFactory {
 	public final static String module = DisruptorPoolFactory.class.getName();
 
 	private DisruptorForCommandFactory disruptorForCommandFactory;
-	private ConcurrentHashMap<String, Disruptor> topicDisruptors;
+	private ConcurrentHashMap<String, Disruptor<EventDisruptor>> topicDisruptors;
 	private ScheduledExecutorService scheduExecStatic = Executors.newScheduledThreadPool(1);
 
 	public DisruptorCommandPoolFactory() {
 		super();
-		this.topicDisruptors = new ConcurrentHashMap();
+		this.topicDisruptors = new ConcurrentHashMap<>();
 	}
 
 	public void start() {
@@ -44,7 +45,7 @@ public class DisruptorCommandPoolFactory  {
 	}
 
 	private void stopDisruptor() {
-		Map<String, Disruptor> mydisruptors = new HashMap(topicDisruptors);
+		Map<String, Disruptor<EventDisruptor>> mydisruptors = new HashMap<>(topicDisruptors);
 		topicDisruptors.clear();
 		try {
 			Thread.sleep(10000);// wait event while until all disruptor is done;
@@ -52,7 +53,7 @@ public class DisruptorCommandPoolFactory  {
 			e1.printStackTrace();
 		}
 		for (String topic : mydisruptors.keySet()) {
-			Disruptor disruptor = (Disruptor) mydisruptors.get(topic);
+			Disruptor<EventDisruptor> disruptor = mydisruptors.get(topic);
 			try {
 				disruptor.halt();
 			} catch (Exception e) {
@@ -62,14 +63,14 @@ public class DisruptorCommandPoolFactory  {
 
 	}
 
-	public Disruptor getDisruptor(String topic, Object target) {
-		Disruptor disruptor = (Disruptor) topicDisruptors.get(topic + target);
+	public Disruptor<EventDisruptor> getDisruptor(String topic, Object target) {
+		Disruptor<EventDisruptor> disruptor = topicDisruptors.get(topic + target);
 		if (disruptor == null) {
 			disruptor = disruptorForCommandFactory.createDisruptor(topic);
 			if (disruptor == null) {
 				return null;
 			}
-			Disruptor disruptorOLd = topicDisruptors.putIfAbsent(topic + target, disruptor);
+			Disruptor<EventDisruptor> disruptorOLd = topicDisruptors.putIfAbsent(topic + target, disruptor);
 			if (disruptorOLd != null)
 				disruptor = disruptorOLd;
 		}

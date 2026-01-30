@@ -1,6 +1,5 @@
 package com.garry.springlifecycle.async.disruptor;
 
-
 import com.garry.springlifecycle.async.disruptor.pool.DisruptorCommandPoolFactory;
 import com.garry.springlifecycle.async.disruptor.pool.DomainCommandHandlerFirst;
 import com.garry.springlifecycle.async.disruptor.pool.DomainEventHandlerDecorator;
@@ -23,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DisruptorForCommandFactory implements ApplicationContextAware {
     public final static String module = DisruptorForCommandFactory.class.getName();
-    protected final Map<String, TreeSet<DomainEventHandler>> handlesMap;
+    protected final Map<String, TreeSet<DomainEventHandler<?>>> handlesMap;
 
     private ApplicationContext applicationContext;
 
@@ -32,15 +31,15 @@ public class DisruptorForCommandFactory implements ApplicationContextAware {
     private DisruptorFactory disruptorFactory;
 
     public DisruptorForCommandFactory(DisruptorParams disruptorParams,
-                                      DisruptorCommandPoolFactory disruptorCommandPoolFactory,
-                                      DisruptorFactory disruptorFactory) {
-        this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler>>();
+            DisruptorCommandPoolFactory disruptorCommandPoolFactory,
+            DisruptorFactory disruptorFactory) {
+        this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler<?>>>();
         this.disruptorCommandPoolFactory = disruptorCommandPoolFactory;
         this.disruptorCommandPoolFactory.setDisruptorForCommandFactory(this);
         this.disruptorFactory = disruptorFactory;
     }
 
-    public Disruptor getDisruptor(String topic, Object target) {
+    public Disruptor<EventDisruptor> getDisruptor(String topic, Object target) {
         return this.disruptorCommandPoolFactory.getDisruptor(topic, target);
     }
 
@@ -48,12 +47,12 @@ public class DisruptorForCommandFactory implements ApplicationContextAware {
 
     }
 
-    private Disruptor createDw(String topic) {
+    private Disruptor<EventDisruptor> createDw(String topic) {
         return disruptorFactory.createDw(topic);
     }
 
-    private Disruptor createDisruptorWithEventHandler(String topic) {
-        TreeSet<DomainEventHandler> handlers = handlesMap.get(topic);
+    private Disruptor<EventDisruptor> createDisruptorWithEventHandler(String topic) {
+        TreeSet<DomainEventHandler<?>> handlers = handlesMap.get(topic);
         if (handlers == null)// not inited
         {
             handlers = this.getTreeSet();
@@ -63,10 +62,10 @@ public class DisruptorForCommandFactory implements ApplicationContextAware {
         if (handlers.isEmpty())
             return null;
 
-        Disruptor dw = createDw(topic);
-        EventHandlerGroup eh = dw.handleEventsWith(new DomainCommandHandlerFirst(this));
+        Disruptor<EventDisruptor> dw = createDw(topic);
+        EventHandlerGroup<EventDisruptor> eh = dw.handleEventsWith(new DomainCommandHandlerFirst(this));
 
-        for (DomainEventHandler handler : handlers) {
+        for (DomainEventHandler<?> handler : handlers) {
             DomainEventHandlerAdapter dea = new DomainEventHandlerDecorator(handler);
             eh = eh.handleEventsWith(dea);
         }
@@ -79,9 +78,9 @@ public class DisruptorForCommandFactory implements ApplicationContextAware {
      * @param topic
      * @return
      */
-    public Disruptor createDisruptor(String topic) {
+    public Disruptor<EventDisruptor> createDisruptor(String topic) {
 
-        Disruptor disruptor = createDisruptorWithEventHandler(topic);
+        Disruptor<EventDisruptor> disruptor = createDisruptorWithEventHandler(topic);
         if (disruptor != null)
             disruptor.start();
         return disruptor;
@@ -92,42 +91,46 @@ public class DisruptorForCommandFactory implements ApplicationContextAware {
         boolean isExist = applicationContext.containsBean(AfterAllInitializing.MODEL_TOPIC_NAME_METHOD + topic);
 
         return isExist;
-//        if (applicationContext.containsBean(AfterAllInitializing.MODEL_TOPIC_NAME_METHOD + topic) == null) {
-//            return false;
-//        } else
-//            return true;
+        // if
+        // (applicationContext.containsBean(AfterAllInitializing.MODEL_TOPIC_NAME_METHOD
+        // + topic) == null) {
+        // return false;
+        // } else
+        // return true;
     }
 
     public ModelConsumerMethodHolder getModelConsumerMethodHolder(String topic) {
-        return (ModelConsumerMethodHolder) applicationContext.getBean(AfterAllInitializing.MODEL_TOPIC_NAME_METHOD + topic);
+        return (ModelConsumerMethodHolder) applicationContext
+                .getBean(AfterAllInitializing.MODEL_TOPIC_NAME_METHOD + topic);
     }
 
-    protected TreeSet<DomainEventHandler> loadOnCommandConsumers(String topic, TreeSet<DomainEventHandler> ehs) {
+    protected TreeSet<DomainEventHandler<?>> loadOnCommandConsumers(String topic, TreeSet<DomainEventHandler<?>> ehs) {
         ModelConsumerMethodHolder modelConsumerMethodHolder = getModelConsumerMethodHolder(topic);
         if (modelConsumerMethodHolder == null)
             return ehs;
-        DomainCommandDispatchHandler domainCommandDispatchHandler = new DomainCommandDispatchHandler(modelConsumerMethodHolder);
+        DomainCommandDispatchHandler domainCommandDispatchHandler = new DomainCommandDispatchHandler(
+                modelConsumerMethodHolder);
         ehs.add(domainCommandDispatchHandler);
         return ehs;
 
     }
 
-//	@Override
-//	public void start() {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	@Override
-//	public void stop() {
-//		this.containerWrapper = null;
-//		this.handlesMap.clear();
-//
-//	}
+    // @Override
+    // public void start() {
+    // // TODO Auto-generated method stub
+    //
+    // }
+    //
+    // @Override
+    // public void stop() {
+    // this.containerWrapper = null;
+    // this.handlesMap.clear();
+    //
+    // }
 
-    public TreeSet<DomainEventHandler> getTreeSet() {
-        return new TreeSet(new Comparator() {
-            public int compare(Object num1, Object num2) {
+    public TreeSet<DomainEventHandler<?>> getTreeSet() {
+        return new TreeSet<>(new Comparator<DomainEventHandler<?>>() {
+            public int compare(DomainEventHandler<?> num1, DomainEventHandler<?> num2) {
                 String inum1, inum2;
                 inum1 = num1.getClass().getName();
                 inum2 = num2.getClass().getName();

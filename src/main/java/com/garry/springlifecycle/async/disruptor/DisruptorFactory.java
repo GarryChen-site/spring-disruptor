@@ -24,27 +24,30 @@ import java.util.concurrent.Executors;
 
 /**
  * SLEEPING is event better option when you have event large number of event
- * processors
- * and you need throughput when you don't mind event 1ms latency hit in the
- * worse
- * case. BLOCKING has the lowest throughput of all the strategies but it does
- * not have the 1ms latency spikes of SLEEPING. It uses no CPU when idle but it
- * does not scale up so well with increasing numbers of event processors because
- * of the contention on the lock. YIELDING and BUSY_SPIN have the best
- * performance for both throughput and latency but eat up event CPU. YIELDING is
- * more friendly in allowing other threads to run when cores are limited. It
- * would be nice if Java had access to the x86 PAUSE instruction to save power
- * and further reduce latency that gets lost due to the wrong choices the CPU
- * can make with speculative execution of busy spin loops. In all cases where
- * you have sufficient cores then all the wait strategies will beat pretty much
- * any other alternative such as queues.
+ * processors and you need throughput when you don't mind event 1ms latency hit
+ * in the worse case.
+ * 
+ * BLOCKING has the lowest throughput of all the strategies but it does not have
+ * the 1ms latency spikes of SLEEPING. It uses no CPU when idle but it does not
+ * scale up so well with increasing numbers of event processors because of the
+ * contention on the lock. YIELDING and BUSY_SPIN have the best performance for
+ * both throughput and latency but eat up event CPU.
+ * 
+ * YIELDING is more friendly in allowing other threads to run when cores are
+ * limited.
+ * It would be nice if Java had access to the x86 PAUSE instruction to save
+ * power and further reduce latency that gets lost due to the wrong choices the
+ * CPU can make with speculative execution of busy spin loops.
+ * 
+ * In all cases where you have sufficient cores then all the wait strategies
+ * will beat pretty much any other alternative such as queues.
  * 
  * 
  */
 @Component
 public class DisruptorFactory implements ApplicationContextAware {
 	public final static String module = DisruptorFactory.class.getName();
-	protected final ConcurrentHashMap<String, TreeSet<DomainEventHandler>> handlesMap;
+	protected final ConcurrentHashMap<String, TreeSet<DomainEventHandler<?>>> handlesMap;
 
 	private int ringBufferSize;
 
@@ -55,37 +58,37 @@ public class DisruptorFactory implements ApplicationContextAware {
 	public DisruptorFactory(DisruptorParams disruptorParams,
 			DisruptorPoolFactory disruptorPoolFactory) {
 		this.ringBufferSize = disruptorParams.getRingBufferSize();
-		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler>>();
+		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler<?>>>();
 		this.disruptorPoolFactory = disruptorPoolFactory;
 		this.disruptorPoolFactory.setDisruptorFactory(this);
 
 	}
 
 	public DisruptorFactory() {
-		// @todo configure in xml
 		this.ringBufferSize = 8;
-		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler>>();
+		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler<?>>>();
 		this.disruptorPoolFactory = new DisruptorPoolFactory();
 		this.disruptorPoolFactory.setDisruptorFactory(this);
 	}
 
-	public Disruptor createDw(String topic) {
+	public Disruptor<EventDisruptor> createDw(String topic) {
 		int size = ringBufferSize;
-		return new Disruptor(new EventDisruptorFactory(), size, Executors.defaultThreadFactory());
+		return new Disruptor<>(new EventDisruptorFactory(), size, Executors.defaultThreadFactory());
 	}
 
-	public Disruptor createSingleDw(String topic) {
+	public Disruptor<EventDisruptor> createSingleDw(String topic) {
 		int size = ringBufferSize;
 		WaitStrategy waitStrategy = new BlockingWaitStrategy();
-		return new Disruptor(new EventDisruptorFactory(), size, Executors.defaultThreadFactory(), ProducerType.SINGLE,
+		return new Disruptor<>(new EventDisruptorFactory(), size, Executors.defaultThreadFactory(), ProducerType.SINGLE,
 				waitStrategy);
 	}
 
-	public Disruptor addEventMessageHandler(Disruptor dw, String topic, TreeSet<DomainEventHandler> handlers) {
+	public Disruptor<EventDisruptor> addEventMessageHandler(Disruptor<EventDisruptor> dw, String topic,
+			TreeSet<DomainEventHandler<?>> handlers) {
 		if (handlers.size() == 0)
 			return null;
-		EventHandlerGroup eh = null;
-		for (DomainEventHandler handler : handlers) {
+		EventHandlerGroup<EventDisruptor> eh = null;
+		for (DomainEventHandler<?> handler : handlers) {
 			DomainEventHandlerAdapter dea = new DomainEventHandlerAdapter(handler);
 			if (eh == null) {
 				eh = dw.handleEventsWith(dea);
@@ -96,7 +99,7 @@ public class DisruptorFactory implements ApplicationContextAware {
 		return dw;
 	}
 
-	public Disruptor getDisruptor(String topic) {
+	public Disruptor<EventDisruptor> getDisruptor(String topic) {
 		return this.disruptorPoolFactory.getDisruptor(topic);
 	}
 
@@ -107,16 +110,16 @@ public class DisruptorFactory implements ApplicationContextAware {
 	/**
 	 * one topic one EventDisruptor
 	 * 
-	 * @param topic 主题
+	 * @param topic
 	 * @return Disruptor
 	 */
-	public Disruptor createDisruptor(String topic) {
-		TreeSet handlers = getHandles(topic);
+	public Disruptor<EventDisruptor> createDisruptor(String topic) {
+		TreeSet<DomainEventHandler<?>> handlers = getHandles(topic);
 		if (handlers == null)
 			return null;
 
-		Disruptor dw = createDw(topic);
-		Disruptor disruptor = addEventMessageHandler(dw, topic, handlers);
+		Disruptor<EventDisruptor> dw = createDw(topic);
+		Disruptor<EventDisruptor> disruptor = addEventMessageHandler(dw, topic, handlers);
 		if (disruptor == null)
 			return null;
 		disruptor.start();
@@ -131,21 +134,21 @@ public class DisruptorFactory implements ApplicationContextAware {
 	 * @param topic 主题
 	 * @return Disruptor
 	 */
-	public Disruptor createSingleDisruptor(String topic) {
-		TreeSet handlers = getHandles(topic);
+	public Disruptor<EventDisruptor> createSingleDisruptor(String topic) {
+		TreeSet<DomainEventHandler<?>> handlers = getHandles(topic);
 		if (handlers == null)
 			return null;
-		Disruptor dw = createSingleDw(topic);
-		Disruptor disruptor = addEventMessageHandler(dw, topic, handlers);
+		Disruptor<EventDisruptor> dw = createSingleDw(topic);
+		Disruptor<EventDisruptor> disruptor = addEventMessageHandler(dw, topic, handlers);
 		if (disruptor == null)
 			return null;
 		disruptor.start();
 		return disruptor;
 	}
 
-	private TreeSet getHandles(String topic) {
-		TreeSet handlersExist = handlesMap.get(topic);
-		TreeSet handlersNew = null;
+	private TreeSet<DomainEventHandler<?>> getHandles(String topic) {
+		TreeSet<DomainEventHandler<?>> handlersExist = handlesMap.get(topic);
+		TreeSet<DomainEventHandler<?>> handlersNew = null;
 		if (handlersExist == null)// not inited
 		{
 			handlersNew = getTreeSet();
@@ -153,9 +156,6 @@ public class DisruptorFactory implements ApplicationContextAware {
 			handlersNew.addAll(loadOnEventConsumers(topic));
 			if (handlersNew.size() == 0) {
 				// maybe by mistake in @Component(topicName)
-				Object o = applicationContext.getBean(topic);
-				if (o == null) {
-				}
 				return null;
 			}
 			handlersExist = handlesMap.putIfAbsent(topic, handlersNew);
@@ -178,24 +178,23 @@ public class DisruptorFactory implements ApplicationContextAware {
 	 * if there are many consumers, execution order will be alphabetical list by
 	 * Name of @Consumer class.
 	 * 
-	 * @param topic 主题
+	 * @param topic
 	 * @return Collection
 	 */
-	protected Collection loadEvenHandler(String topic) {
-		Collection ehs = new ArrayList();
-		// Collection<String> consumers = (Collection<String>)
-		// applicationContext.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
+	protected Collection<DomainEventHandler<?>> loadEvenHandler(String topic) {
+		Collection<DomainEventHandler<?>> ehs = new ArrayList<>();
 		boolean isExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
 		if (!isExist) {
 			return ehs;
 		}
+		@SuppressWarnings("unchecked")
 		Collection<String> consumers = (Collection<String>) applicationContext
 				.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
 		if (consumers.size() == 0) {
 			return ehs;
 		}
 		for (String consumerName : consumers) {
-			DomainEventHandler eh = (DomainEventHandler) applicationContext.getBean(consumerName);
+			DomainEventHandler<?> eh = applicationContext.getBean(consumerName, DomainEventHandler.class);
 			ehs.add(eh);
 		}
 
@@ -203,14 +202,14 @@ public class DisruptorFactory implements ApplicationContextAware {
 
 	}
 
-	protected Collection loadOnEventConsumers(String topic) {
-		Collection ehs = new ArrayList();
+	protected Collection<DomainEventHandler<?>> loadOnEventConsumers(String topic) {
+		Collection<DomainEventHandler<?>> ehs = new ArrayList<>();
 		final boolean isExist = applicationContext
 				.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
 		if (!isExist) {
 			return ehs;
 		}
-		Collection consumerMethods = (Collection) applicationContext
+		Collection<?> consumerMethods = (Collection<?>) applicationContext
 				.getBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
 		for (Object o : consumerMethods) {
 			ConsumerMethodHolder consumerMethodHolder = (ConsumerMethodHolder) o;
@@ -222,9 +221,9 @@ public class DisruptorFactory implements ApplicationContextAware {
 
 	}
 
-	public TreeSet<DomainEventHandler> getTreeSet() {
-		return new TreeSet(new Comparator() {
-			public int compare(Object num1, Object num2) {
+	public TreeSet<DomainEventHandler<?>> getTreeSet() {
+		return new TreeSet<>(new Comparator<DomainEventHandler<?>>() {
+			public int compare(DomainEventHandler<?> num1, DomainEventHandler<?> num2) {
 				String inum1, inum2;
 				if (num1 instanceof DomainEventDispatchHandler) {
 					inum1 = ((DomainEventDispatchHandler) num1).getSortName();
