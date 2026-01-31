@@ -13,10 +13,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Documented
 @Component
-//@Component  不要是因为需要拦截注解获取annotation信息
 public @interface Consumer {
     /**
      * topic name
+     * 
      * @return
      */
     String value();

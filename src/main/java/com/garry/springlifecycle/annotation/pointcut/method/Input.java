@@ -1,6 +1,3 @@
-/*
- * 
- */
 package com.garry.springlifecycle.annotation.pointcut.method;
 
 import java.lang.annotation.Documented;

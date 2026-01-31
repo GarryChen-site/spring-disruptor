@@ -11,9 +11,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Domain Model should normal live in memory not in database. so cache in memory
  * is very important for domain model life cycle.
  * 
- * 
- * @see com.jdon.controller.model.ModelIF
- * 
  */
 @Target(FIELD)
 @Retention(RUNTIME)

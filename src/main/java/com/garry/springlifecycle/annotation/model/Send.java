@@ -8,71 +8,83 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * Annotation for marking methods that send domain messages/events.
+ * <p>
+ * Domain Models should normally live in memory, not in a database, so caching
+ * in memory
+ * is very important for the domain model life cycle.
  * 
- * Domain Model should normal live in memory not in database. so cache in memory
- * is very important for domain model life cycle.
+ * <h3>Usage Example</h3>
  * 
- * Example producer: com.jdon.sample.test.domain.onecase.DomainEvent
- * Consumer:com.jdon.sample.test.domain.onecase.DomainListener
+ * <h4>Step 1: Annotate the Producer Class</h4>
  * 
- * Domain Model producer /Consumer:
+ * <pre>
+ * &#64;Model
+ * &#64;Introduce("message")
+ * public class DomainEvent {
+ * 	// Domain event implementation
+ * }
+ * </pre>
+ * <p>
+ * The value "message" in {@code &#64;Introduce("message")} refers to the
+ * {@code MessageInterceptor} configured in aspect.xml
  * 
- * 1. annotate the producer class with @Model and @Introduce("message")
- *
- * <br> @Model
- * <br> @Introduce("message") public class DomainEvent {}
+ * <h4>Step 2: Annotate the Producer Method</h4>
  * 
- *                       the value "message" of @@Introduce("message") is the
- *                       om.jdon.domain.message.MessageInterceptor configured in
- *                       aspect.xml
+ * <pre>
+ * &#64;Send("mytopic")
+ * public DomainMessage myMethod() {
+ * 	DomainMessage em = new DomainMessage(this.name);
+ * 	return em;
+ * }
+ * </pre>
  * 
- *                       2. annotate the method with @Send("mytopic") of the
- *                       producer class; * @Send("mytopic") public DomainMessage
- *                       myMethod() { DomainMessage em = new
- *                       DomainMessage(this.name); return em; }
+ * <h4>Step 3: Topic Matching</h4>
+ * The "mytopic" value in {@code &#64;Send("mytopic")} must match the value in
+ * {@code &#64;Consumer("mytopic")}
  * 
- *                       3. the "mytopic" value in @Send("mytopic") is equals to
- *                       the "mytopic" value in @Consumer("mytopic");
+ * <h4>Step 4 &amp; 5: Configure the Consumer</h4>
+ * There are two ways to create a consumer:
  * 
- *                       4. annotate the consumer class with
- *                       <br>@Consumer("mytopic");
+ * <p>
+ * <b>Option 1: Implement DomainEventHandler</b>
+ * </p>
  * 
- *                       5.there are two kind of consumer
+ * <pre>
+ * &#64;Consumer("mytopic")
+ * public class MyDomainEventHandler implements DomainEventHandler {
+ * 	public void onEvent(EventDisruptor event, boolean endOfBatch) throws Exception {
+ * 		// Handle event
+ * 	}
+ * }
+ * </pre>
  * 
- *                       (1)the consumer class must implements
- *                       com.jdon.domain.message.DomainEventHandler
- *
- * <br>@Consumer("mytopic") public class MyDomainEventHandler implements
- *                      DomainEventHandler {
+ * <p>
+ * <b>Option 2: Use &#64;OnEvent Annotation</b>
+ * </p>
  * 
- *                      public void onEvent(EventDisruptor event, boolean
- *                      endOfBatch) throws Exception{..}
+ * <pre>
+ * &#64;OnEvent("mytopic")
+ * public void handleEvent(EventDisruptor event) {
+ * 	// Handle event
+ * }
+ * </pre>
  * 
- *                      }
+ * <h3>Message Patterns</h3>
  * 
+ * <p>
+ * <b>Topic/Queue (1:N or 1:1):</b>
+ * </p>
+ * {@code &#64;Send(topicName)} =&gt; {@code &#64;Consumer(topicName)}
  * 
- *                      (2)or the consumer class's method annotated with
- *                      <br>@onEvent("mytopic")
- * 
- * 
- * 
- * 
- *                      Topic/queue(1:N or 1:1):
- *
- * <br>@Send(topicName) ==> @Consumer(topicName);
- * 
- * 
- * 
- *                  under version 6.3 there is event Older queue(1:1):
- *
- * <br>@Send(topicName) ==> @Component(topicName);
- * 
- *                  The message accepter class annotated with
- * <br>@Component(topicName) must implements com.jdon.domain.message.MessageListener
- * 
- * 
- * @see com.jdon.controller.model.ModelIF
- * 
+ * <p>
+ * <b>Legacy Queue (1:1) - version 6.3 and below:</b>
+ * </p>
+ * {@code &#64;Send(topicName)} =&gt; {@code &#64;Component(topicName)}
+ * <p>
+ * The message accepter class annotated with {@code &#64;Component(topicName)}
+ * must implement
+ * {@code com.garry.domain.message.MessageListener}
  */
 @Target(METHOD)
 @Retention(RUNTIME)
@@ -81,7 +93,8 @@ public @interface Send {
 	/**
 	 * topic/queue name
 	 *
-	 * <br> @Send(topicName) ==> @Consumer(topicName);
+	 * <br>
+	 * @Send(topicName) ==> @Consumer(topicName);
 	 * 
 	 * @return topic/queue name
 	 */
