@@ -1,7 +1,6 @@
 
 package com.garry.springlifecycle.domain.message;
 
-
 import com.garry.springlifecycle.async.disruptor.EventDisruptor;
 
 /**

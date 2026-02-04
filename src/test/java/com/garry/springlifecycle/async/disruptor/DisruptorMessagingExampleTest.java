@@ -67,7 +67,7 @@ public class DisruptorMessagingExampleTest {
         System.out.println("\n=== Example 1: Basic Producer-Consumer ===\n");
 
         // 1. Create a TreeSet of handlers for the topic
-        TreeSet<DomainEventHandler<?>> handlers = disruptorFactory.getTreeSet();
+        TreeSet<DomainEventHandler<EventDisruptor>> handlers = disruptorFactory.getTreeSet();
         handlers.add(orderConsumer);
 
         // 2. Create a Disruptor for the "orderCreated" topic
@@ -142,7 +142,7 @@ public class DisruptorMessagingExampleTest {
         };
 
         // Register all consumers
-        TreeSet<DomainEventHandler<?>> handlers = disruptorFactory.getTreeSet();
+        TreeSet<DomainEventHandler<EventDisruptor>> handlers = disruptorFactory.getTreeSet();
         handlers.add(consumer1);
         handlers.add(validationConsumer);
         handlers.add(loggingConsumer);
@@ -205,7 +205,7 @@ public class DisruptorMessagingExampleTest {
             }
         };
 
-        TreeSet<DomainEventHandler<?>> handlers = disruptorFactory.getTreeSet();
+        TreeSet<DomainEventHandler<EventDisruptor>> handlers = disruptorFactory.getTreeSet();
         handlers.add(batchConsumer);
 
         disruptor = disruptorFactory.createSingleDw("orderCreated");
@@ -273,7 +273,7 @@ public class DisruptorMessagingExampleTest {
             }
         };
 
-        TreeSet<DomainEventHandler<?>> handlers = disruptorFactory.getTreeSet();
+        TreeSet<DomainEventHandler<EventDisruptor>> handlers = disruptorFactory.getTreeSet();
         handlers.add(slowConsumer);
 
         disruptor = disruptorFactory.createSingleDw("orderCreated");
@@ -332,7 +332,7 @@ public class DisruptorMessagingExampleTest {
         // Consumer that should still work
         OrderEventConsumer reliableConsumer = new OrderEventConsumer();
 
-        TreeSet<DomainEventHandler<?>> handlers = disruptorFactory.getTreeSet();
+        TreeSet<DomainEventHandler<EventDisruptor>> handlers = disruptorFactory.getTreeSet();
         handlers.add(faultyConsumer);
         handlers.add(reliableConsumer);
 

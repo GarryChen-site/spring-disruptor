@@ -1,6 +1,5 @@
 package com.garry.springlifecycle.async.disruptor.pool;
 
-
 import com.garry.springlifecycle.async.disruptor.DomainEventHandlerAdapter;
 import com.garry.springlifecycle.async.disruptor.EventDisruptor;
 import com.garry.springlifecycle.domain.message.DomainEventHandler;

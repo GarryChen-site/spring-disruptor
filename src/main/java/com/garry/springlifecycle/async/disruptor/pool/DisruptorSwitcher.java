@@ -1,10 +1,10 @@
 package com.garry.springlifecycle.async.disruptor.pool;
 
 public class DisruptorSwitcher {
-	private static ThreadLocal threadCache = new ThreadLocal();
+	private static ThreadLocal<String> threadCache = new ThreadLocal<>();
 
 	public String getCommandTopic() {
-		return (String) threadCache.get();
+		return threadCache.get();
 	}
 
 	public void setCommandTopic(String topic) {

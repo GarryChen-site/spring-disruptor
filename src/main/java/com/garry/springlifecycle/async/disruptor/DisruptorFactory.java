@@ -47,7 +47,7 @@ import java.util.concurrent.Executors;
 @Component
 public class DisruptorFactory implements ApplicationContextAware {
 	public final static String module = DisruptorFactory.class.getName();
-	protected final ConcurrentHashMap<String, TreeSet<DomainEventHandler<?>>> handlesMap;
+	protected final ConcurrentHashMap<String, TreeSet<DomainEventHandler<EventDisruptor>>> handlesMap;
 
 	private int ringBufferSize;
 
@@ -58,7 +58,7 @@ public class DisruptorFactory implements ApplicationContextAware {
 	public DisruptorFactory(DisruptorParams disruptorParams,
 			DisruptorPoolFactory disruptorPoolFactory) {
 		this.ringBufferSize = disruptorParams.getRingBufferSize();
-		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler<?>>>();
+		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler<EventDisruptor>>>();
 		this.disruptorPoolFactory = disruptorPoolFactory;
 		this.disruptorPoolFactory.setDisruptorFactory(this);
 
@@ -66,7 +66,7 @@ public class DisruptorFactory implements ApplicationContextAware {
 
 	public DisruptorFactory() {
 		this.ringBufferSize = 8;
-		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler<?>>>();
+		this.handlesMap = new ConcurrentHashMap<String, TreeSet<DomainEventHandler<EventDisruptor>>>();
 		this.disruptorPoolFactory = new DisruptorPoolFactory();
 		this.disruptorPoolFactory.setDisruptorFactory(this);
 	}
@@ -84,11 +84,11 @@ public class DisruptorFactory implements ApplicationContextAware {
 	}
 
 	public Disruptor<EventDisruptor> addEventMessageHandler(Disruptor<EventDisruptor> dw, String topic,
-			TreeSet<DomainEventHandler<?>> handlers) {
+			TreeSet<DomainEventHandler<EventDisruptor>> handlers) {
 		if (handlers.size() == 0)
 			return null;
 		EventHandlerGroup<EventDisruptor> eh = null;
-		for (DomainEventHandler<?> handler : handlers) {
+		for (DomainEventHandler<EventDisruptor> handler : handlers) {
 			DomainEventHandlerAdapter dea = new DomainEventHandlerAdapter(handler);
 			if (eh == null) {
 				eh = dw.handleEventsWith(dea);
@@ -114,7 +114,7 @@ public class DisruptorFactory implements ApplicationContextAware {
 	 * @return Disruptor
 	 */
 	public Disruptor<EventDisruptor> createDisruptor(String topic) {
-		TreeSet<DomainEventHandler<?>> handlers = getHandles(topic);
+		TreeSet<DomainEventHandler<EventDisruptor>> handlers = getHandles(topic);
 		if (handlers == null)
 			return null;
 
@@ -135,7 +135,7 @@ public class DisruptorFactory implements ApplicationContextAware {
 	 * @return Disruptor
 	 */
 	public Disruptor<EventDisruptor> createSingleDisruptor(String topic) {
-		TreeSet<DomainEventHandler<?>> handlers = getHandles(topic);
+		TreeSet<DomainEventHandler<EventDisruptor>> handlers = getHandles(topic);
 		if (handlers == null)
 			return null;
 		Disruptor<EventDisruptor> dw = createSingleDw(topic);
@@ -146,9 +146,9 @@ public class DisruptorFactory implements ApplicationContextAware {
 		return disruptor;
 	}
 
-	private TreeSet<DomainEventHandler<?>> getHandles(String topic) {
-		TreeSet<DomainEventHandler<?>> handlersExist = handlesMap.get(topic);
-		TreeSet<DomainEventHandler<?>> handlersNew = null;
+	private TreeSet<DomainEventHandler<EventDisruptor>> getHandles(String topic) {
+		TreeSet<DomainEventHandler<EventDisruptor>> handlersExist = handlesMap.get(topic);
+		TreeSet<DomainEventHandler<EventDisruptor>> handlersNew = null;
 		if (handlersExist == null)// not inited
 		{
 			handlersNew = getTreeSet();
@@ -181,8 +181,8 @@ public class DisruptorFactory implements ApplicationContextAware {
 	 * @param topic
 	 * @return Collection
 	 */
-	protected Collection<DomainEventHandler<?>> loadEvenHandler(String topic) {
-		Collection<DomainEventHandler<?>> ehs = new ArrayList<>();
+	protected Collection<DomainEventHandler<EventDisruptor>> loadEvenHandler(String topic) {
+		Collection<DomainEventHandler<EventDisruptor>> ehs = new ArrayList<>();
 		boolean isExist = applicationContext.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME + topic);
 		if (!isExist) {
 			return ehs;
@@ -194,7 +194,7 @@ public class DisruptorFactory implements ApplicationContextAware {
 			return ehs;
 		}
 		for (String consumerName : consumers) {
-			DomainEventHandler<?> eh = applicationContext.getBean(consumerName, DomainEventHandler.class);
+			DomainEventHandler<EventDisruptor> eh = applicationContext.getBean(consumerName, DomainEventHandler.class);
 			ehs.add(eh);
 		}
 
@@ -202,8 +202,8 @@ public class DisruptorFactory implements ApplicationContextAware {
 
 	}
 
-	protected Collection<DomainEventHandler<?>> loadOnEventConsumers(String topic) {
-		Collection<DomainEventHandler<?>> ehs = new ArrayList<>();
+	protected Collection<DomainEventHandler<EventDisruptor>> loadOnEventConsumers(String topic) {
+		Collection<DomainEventHandler<EventDisruptor>> ehs = new ArrayList<>();
 		final boolean isExist = applicationContext
 				.containsBean(AfterAllInitializing.CONSUMER_TOPIC_NAME_METHOD + topic);
 		if (!isExist) {
@@ -221,9 +221,9 @@ public class DisruptorFactory implements ApplicationContextAware {
 
 	}
 
-	public TreeSet<DomainEventHandler<?>> getTreeSet() {
-		return new TreeSet<>(new Comparator<DomainEventHandler<?>>() {
-			public int compare(DomainEventHandler<?> num1, DomainEventHandler<?> num2) {
+	public TreeSet<DomainEventHandler<EventDisruptor>> getTreeSet() {
+		return new TreeSet<>(new Comparator<DomainEventHandler<EventDisruptor>>() {
+			public int compare(DomainEventHandler<EventDisruptor> num1, DomainEventHandler<EventDisruptor> num2) {
 				String inum1, inum2;
 				if (num1 instanceof DomainEventDispatchHandler) {
 					inum1 = ((DomainEventDispatchHandler) num1).getSortName();

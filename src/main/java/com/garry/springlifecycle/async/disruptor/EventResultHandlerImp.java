@@ -13,9 +13,9 @@ public class EventResultHandlerImp implements EventResultHandler {
 
 	public EventResultHandlerImp(int timeoutforeturnResult) {
 		super();
-		RingBuffer ringBuffer = RingBuffer.createSingleProducer(new EventResultFactory(), 1,
+		RingBuffer<EventResultDisruptor> ringBuffer = RingBuffer.createSingleProducer(new EventResultFactory(), 1,
 				new TimeoutBlockingWaitStrategy(timeoutforeturnResult,
-				TimeUnit.MILLISECONDS));
+						TimeUnit.MILLISECONDS));
 		this.valueEventProcessor = new ValueEventProcessor(ringBuffer);
 
 	}
